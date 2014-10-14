@@ -15,7 +15,6 @@
  */
 
 #include <fstream>
-#include <auto_ptr.h>
 
 #include "tools.h"
 #include "ini_file.h"

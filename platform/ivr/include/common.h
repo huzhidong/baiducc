@@ -34,8 +34,8 @@
 #include <algorithm>
 #include <exception>
 #include <stdexcept>
+#include <memory>
 
-//#include <com_log.h>
 #include <bgcc.h>
 
 #include "esl.h"

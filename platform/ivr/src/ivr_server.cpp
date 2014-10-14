@@ -16,7 +16,6 @@
 
 
 #include <getopt.h>
-#include <auto_ptr.h>
 
 #include "lock.h"
 #include "common.h"

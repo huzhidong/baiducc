@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <auto_ptr.h>
 
 #include "common.h"
 #include "tools.h"
