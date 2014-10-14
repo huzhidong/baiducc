@@ -52,7 +52,7 @@ cd $DIRNAME
 
 
 chmod +x configure;
-CONFIG="./configure --prefix=$INSTALL --enable-shared=no --enable-static=yes --with-pic=yes"
+CONFIG="./configure --prefix=$INSTALL --enable-shared=no --enable-static=yes --with-pic=yes --without-libidn"
 CPPFLAGS="-fPIC" $CONFIG
 make && make install
 
