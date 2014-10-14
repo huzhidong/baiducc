@@ -64,7 +64,7 @@ void ThreadPool::initialize_threads(uint32_t max_thread_num) {
             //空余20%的资源，20%以内的呼叫直接挂机，超过20%则不予响应
             uint32_t tmp = (uint32_t)((double)max_thread_num * 1.2) + 1;
 
-            sem_lock_t lock_threads(_available_threads);
+            sem_lock_t lock_threads(&_available_threads);
 
             for (uint32_t i = _max_thread_num; i < tmp; ++i) {
                 pthread_t tempThread;
@@ -132,7 +132,7 @@ void ThreadPool::destroy_pool(int max_poll_second = 2) {
 
 
 bool ThreadPool::assign_work(WorkerThread* worker_thread) {
-    sem_lock_t lock_sem(_available_threads);
+    sem_lock_t lock_sem(&_available_threads);
 
     if (!lock_sem.wait()) {
         return false;
@@ -155,12 +155,12 @@ bool ThreadPool::assign_work(WorkerThread* worker_thread) {
     IVR_TRACE("unfinished_work = %u", _unfinished_work);
     IVR_TRACE("push worker address:[%p]", worker_thread);
 
-    sem_lock_t lock_work(_available_work);
+    sem_lock_t lock_work(&_available_work);
     return lock_work.post();
 }
 
 bool ThreadPool::fetch_work(WorkerThread** worker) {
-    sem_lock_t lock_work(_available_work);
+    sem_lock_t lock_work(&_available_work);
 
     if (!lock_work.wait()) {
         return false;
@@ -177,7 +177,7 @@ bool ThreadPool::fetch_work(WorkerThread** worker) {
     _worker_queue.pop();
     IVR_TRACE("fetch work (%p)", *worker);
 
-    sem_lock_t lock_thread(_available_threads);
+    sem_lock_t lock_thread(&_available_threads);
     return lock_thread.post();
 }
 

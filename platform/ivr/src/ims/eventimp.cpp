@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <auto_ptr.h>
+
 #include "ims/eventimp.h"
 #include <tools.h>
 #include <ims/ims_mgr.h>

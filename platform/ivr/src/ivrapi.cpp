@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <auto_ptr.h>
 #include <ivrapi.h>
 #include <conf_manager.h>
 #include <threadtools.h>

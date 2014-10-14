@@ -106,10 +106,11 @@ int main(int argc, char** argv) {
     TRACE_LOG("starting freeswitch manager...");
     //fs_mgr∆Ù∂Ø
     std::list<ims_conf_gw_node_t*>& gws = conf.gateway;
-    ims_conf_gw_node_t* gw_node;
+    ims_conf_gw_node_t* gw_node=NULL;
 
     for (std::list<ims_conf_gw_node_t*>::iterator it = gws.begin(); it != gws.end(); ++it) {
-        if (gw_node = *it) {
+        if (*it) {
+            gw_node = (*it);
             fs_info_t info(gw_node->id, gw_node->ip, gw_node->port, gw_node->max_conn,
                            gw_node->user, gw_node->pswd);
 

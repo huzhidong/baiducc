@@ -20,7 +20,7 @@ CXXFLAGS = -Wall -W -pipe -Wno-unused-parameter -Wreorder -Wwrite-strings -Wswit
 		   -fPIC -finline-functions -Winline -Wreturn-type -Wtrigraphs -Wformat -Wparentheses -Wpointer-arith \
 		         -DSCMPF_MODULE_VERSION=\"$(VERSION)\"  -DPROJECT_NAME=\"$(BINNAME)\"
 
-LDFLAGS = -lacd -lap -lpthread -lbgcc -lssl -lm -lrt
+LDFLAGS = -lacd -lap -lpthread -lbgcc -lssl -lcrypto -lm -lrt
 
 SOURCES = $(wildcard src/core/*.cpp) $(wildcard src/apserver/*.cpp) $(wildcard src/apclient/*.cpp)
 OBJS = $(patsubst %.cpp,%.o,$(SOURCES))
@@ -61,7 +61,7 @@ output: $(OBJS)
 
 $(OBJS): %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INC_PATH) 
-clean:apclean getagentclean reloadclean acdServerclean
+clean:apclean
 
 apclean:
 	rm -f $(OBJS)
@@ -71,12 +71,3 @@ apclean:
 	rm -f $(BINNAME)
 	rm -fr $(OUTPUT_PATH)
 	rm -fr $(LOG_PATH)
-
-getagentclean:
-	@$(MAKE) clean -C sample/GetAgents
-
-reloadclean:
-	@$(MAKE) clean -C sample/Reload
-
-acdServerclean:
-	@$(MAKE) clean -C sample/acdServer

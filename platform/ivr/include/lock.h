@@ -127,14 +127,14 @@ private:
 
 class sem_lock_t {
 public:
-    sem_lock_t(sem_t& sem): _sem(sem) {
+    sem_lock_t(sem_t* sem): _sem(sem) {
     }
 
     bool wait()const {
         int32_t ret = 0;
 
         do {
-            ret = sem_wait(&_sem);
+            ret = sem_wait(_sem);
         } while (-1 == ret && EINTR == errno);
 
         return 0 == ret;
@@ -143,13 +143,13 @@ public:
         int32_t ret = 0;
 
         do {
-            ret = sem_post(&_sem);
+            ret = sem_post(_sem);
         } while (-1 == ret && EINTR == errno);
 
         return 0 == ret;
     }
 private:
-    mutable sem_t& _sem;
+    mutable sem_t* _sem;
 };
 
 #endif

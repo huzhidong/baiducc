@@ -155,7 +155,7 @@ public:
 
     //////////////////////channel ////////////////////////
     bool create_channel(ims::SessionIdT id,
-                        const char* id, const char* name,
+                        const char* cid, const char* name,
                         ims::CallStateT callstate = ims::CallStateT::SG_UnknownState,
                         ims::MediaStateT mediastate = ims::MediaStateT::MG_UnknownState);
     bool destroy_channel(const char* channelid);

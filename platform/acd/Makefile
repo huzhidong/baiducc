@@ -22,7 +22,7 @@ CXXFLAGS = -Wall -W -pipe -Wno-unused-parameter -Wreorder -Wwrite-strings -Wswit
 		         -DACD_VERSION=\"$(VERSION)\" -DCVSTAG=\"$(TAG)\" -DPROJECT_NAME=\"$(BINNAME)\"\
 #				 -Dprotected=public -Dprivate=public
 
-LDFLAGS =  -lacd -lims -lbgcc -lmysqlclient_r -luuid -lpthread -lxml2 -lssl -lm -lrt 
+LDFLAGS =  -lacd -lims -lbgcc -lmysqlclient_r -lz -luuid -lpthread -lxml2 -lssl -lcrypto -lm -lrt 
 
 SOURCES = $(wildcard src/*.cpp)
 OBJS = $(patsubst %.cpp,%.o,$(SOURCES))

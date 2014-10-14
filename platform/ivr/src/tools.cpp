@@ -15,6 +15,8 @@
  */
 
 #include <errno.h>
+#include <limits> 
+
 #include "tools.h"
 #include "db_pool.h"
 

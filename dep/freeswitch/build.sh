@@ -81,6 +81,7 @@ fi
 
 echo "begin to build..."
 
+sed -i '14764,14782s/^/#&/g' configure
 CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=$PREFIX
 
 echo "begin compiling libedit library..."
@@ -92,6 +93,7 @@ make -C libs/curl/
 echo "end compiling curl library..."
 
 echo "begin compiling esl library..."
+sed -i 's/-Werror//g' libs/esl/Makefile
 make -C libs/esl/ 
 echo "end compiling esl library..."
 

@@ -34,6 +34,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 #define MAX_EMAIL_LEN 1024
 #define MAX_PHONE_LEN 1024
@@ -370,7 +371,7 @@ bool load_file(const char* file_path) {
         }
 
         std::string strSection = strLine.substr(firstPos + 1, lastPos - firstPos - 1);
-        transform(strSection.begin(), strSection.end(), strSection.begin(), ::tolower);
+        std::transform(strSection.begin(), strSection.end(), strSection.begin(), ::tolower);
 
         section_map sectionMap;
         fileMap[strSection] = sectionMap;
@@ -405,7 +406,7 @@ bool load_file(const char* file_path) {
 
             int32_t pos = strLine.find_last_not_of(' ', pos0 - 1);
             std::string strKey = strLine.substr(firstPos, pos - firstPos + 1);
-            transform(strKey.begin(), strKey.end(), strKey.begin(), ::tolower);
+            std::transform(strKey.begin(), strKey.end(), strKey.begin(), ::tolower);
             pos = strLine.find_first_not_of(' ', pos0 + 1);
             std::string strVal("");
 
@@ -592,7 +593,7 @@ int32_t get_int(file_map filemap, const char* section_name, const char* key_name
     std:: string strTmp;
 
     strTmp = section_name;
-    transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
+    std::transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
 
     if (filemap.find(strTmp) == filemap.end()) {
         return ret;
@@ -600,7 +601,7 @@ int32_t get_int(file_map filemap, const char* section_name, const char* key_name
 
     section_map& pSectionMap = filemap[strTmp];
     strTmp = key_name;
-    transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
+    std::transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
 
     if (pSectionMap.find(strTmp) == pSectionMap.end()) {
         return ret;
@@ -626,7 +627,7 @@ int32_t get_string(file_map filemap, const char* section_name, const char* key_n
     std:: string strTmp;
 
     strTmp = section_name;
-    transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
+    std::transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
 
     if (filemap.find(strTmp) == filemap.end()) {
         strncpy(dest_buff, default_value, buff_size - 1);
@@ -635,7 +636,7 @@ int32_t get_string(file_map filemap, const char* section_name, const char* key_n
 
     section_map& pSectionMap = filemap[strTmp];
     strTmp = key_name;
-    transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
+    std::transform(strTmp.begin(), strTmp.end(), strTmp.begin(), ::tolower);
 
     if (pSectionMap.find(strTmp) == pSectionMap.end()) {
         strncpy(dest_buff, default_value, buff_size - 1);
@@ -853,6 +854,7 @@ int32_t check_ivr_server(const char* ip_addr, uint32_t port, int32_t* cpu, int32
     int32_t getbytes = 0;
     int32_t ret = IVR_SUCCESS;
     int32_t tmpRet = 0;
+    char* tmpbuf = NULL;
 
     //host = gethostbyname(ip_addr);
     hostRes = gethostbyname_r(ip_addr, &host, strPtmpHost, MAX_LINE_LEN, &ptmpHost, &hostErr);
@@ -898,7 +900,7 @@ int32_t check_ivr_server(const char* ip_addr, uint32_t port, int32_t* cpu, int32
     //接收"Connect"消息
     bzero(&buffer, sizeof(buffer));
     getbytes = 9;
-    char* tmpbuf = buffer;
+    tmpbuf = buffer;
 
     do {
         nbytes = recv(sockfd, tmpbuf, getbytes, 0);
@@ -984,8 +986,7 @@ int32_t check_ivr_server(const char* ip_addr, uint32_t port, int32_t* cpu, int32
     }
 
     gettimeofday(&endTime , 0);
-    timeUsed = (endTime.tv_usec - startTime.tv_usec) / 1000 + (endTime.tv_sec - startTime.tv_sec) * 1000
-               ;
+    timeUsed = (endTime.tv_usec - startTime.tv_usec) / 1000 + (endTime.tv_sec - startTime.tv_sec) * 1000;
 
     if (timeUsed >= g_conf_info.connect_timeout) {
         //查看链接是否超时

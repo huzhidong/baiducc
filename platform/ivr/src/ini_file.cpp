@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+#include <fstream>
+#include <auto_ptr.h>
+
 #include "tools.h"
 #include "ini_file.h"
-#include <fstream>
 
 INIFile::~INIFile() {
     _file_map.clear();
@@ -57,9 +59,6 @@ bool INIFile::load_file(const char* file_name, section_map_t& sections, bool cas
 
             line = szbuf;
             ivr_tools_t::trim(line);
-            //            if(!casesensive){
-            //                transform(line.begin(), line.end(), line.begin(), ::tolower);
-            //            }
         } else {
             has_read = false;
         }

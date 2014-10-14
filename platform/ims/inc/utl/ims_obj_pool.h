@@ -196,13 +196,6 @@ private:
     bool    _inited;              ///<  是否已经完成初始化，防止多次初始化
 
     bgcc::Mutex _mutex;         ///<  对象池互斥锁
-
-    /**
-     * @brief 获取对象之后，或释放对象之前执行的回调函数
-     *
-     */
-    typedef void CALLBACK(T*);
-
 };
 
 #endif  //__IMS_OBJ_POOL_H_

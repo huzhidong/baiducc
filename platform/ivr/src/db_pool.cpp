@@ -168,7 +168,7 @@ int32_t DBContainer::create_container(mysql::MySQL_Driver* driver, string& host,
 Connection* DBContainer::get_connection() {
     Connection* conn = NULL;
 
-    sem_lock_t lock_conn(_sem_conn);
+    sem_lock_t lock_conn(&_sem_conn);
 
     if (!lock_conn.wait()) {
         return NULL;
@@ -213,6 +213,6 @@ void DBContainer::free_connection(Connection* conn) {
         _idle_conn_vec.push_back(conn);
     }
 
-    sem_lock_t lock_conn(_sem_conn);
+    sem_lock_t lock_conn(&_sem_conn);
     lock_conn.post();
 }

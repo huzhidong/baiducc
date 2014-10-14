@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+
+#include <getopt.h>
+#include <auto_ptr.h>
+
 #include "lock.h"
 #include "common.h"
 #include "ini_file.h"
@@ -30,7 +34,6 @@
 #include "ivr_timer.h"
 #include "ivrapi.h"
 
-#include <getopt.h>
 
 #ifndef SCMPF_MODULE_VERSION
 #define SCMPF_MODULE_VERSION "undefined"
@@ -260,8 +263,7 @@ void sig_handler(int32_t signum) {
         }
 
         ivr_tools_t::safe_sleeps(1);
-        sem_lock_t sem_lock(g_stop_sem);
-        //        sem_post(&g_stop_sem);
+        sem_lock_t sem_lock(&g_stop_sem);
         sem_lock.post();
     }
 }
@@ -271,15 +273,6 @@ bool init_log() {
     bgcclogpath += "bgcc.cfg";
     bgcc::log_open(bgcclogpath.c_str());
     IVR_TRACE("bgcc::log_open success!");
-
-    /* int32_t ret = com_loadlog(LOG_PATH, "log.conf");
-     if (ret != 0) {
-         IVR_FATAL("com_openlog() = %d \n", ret);
-         return false;
-     }
-     else {
-         IVR_TRACE("com_openlog() success");
-     }*/
 
     return true;
 }
@@ -400,9 +393,8 @@ int32_t main(int32_t argc, char* argv[]) {
     start_debug_server(g_server_port - 1);
 #endif
 
-    sem_lock_t stop_sem(g_stop_sem);
+    sem_lock_t stop_sem(&g_stop_sem);
     stop_sem.wait();
-    //    threadpool->destroy_pool(1);
 
     return SUCCESS;
 }

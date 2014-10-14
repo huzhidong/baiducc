@@ -108,6 +108,10 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     IVR_DEBUG("inbound_execute event queue pointer %lu, queue size: %lu",
               (uint64_t)(((session_dynamic_resource_t*)taskparam)->event_queue),
               ((session_dynamic_resource_t*)taskparam)->event_queue->size());
+    
+    ivr_session_id_t ivr_s_id;
+    session_dynamic_resource_t* resource = NULL;
+    IvrInstanceManager* mgr = NULL;
 
     if (!check_capability()) {
         ret = 1;
@@ -165,9 +169,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     //  if answer the call, will add information
 
     //´´½¨ÊµÀý
-    ivr_session_id_t ivr_s_id;
-    session_dynamic_resource_t* resource = (session_dynamic_resource_t*)taskparam;
-    IvrInstanceManager* mgr = IvrInstanceManager::get_instance();
+    resource = (session_dynamic_resource_t*)taskparam;
+    mgr = IvrInstanceManager::get_instance();
 
     if (IVR_SUCCESS != mgr->create_ivr_instance(script.type, script.fid, &ivr_s_id, *resource,
             script.callid.c_str())) {
