@@ -1,8 +1,8 @@
 #platform
 
 ##建议环境
-1. linux内核操作系统，建议内核版本> 2.6.9
-2. gcc 3.4 编译工具链 
+1. linux内核操作系统，建议内核版本> 2.6.9， 64bit
+2. gcc 3.4/4.8 编译工具链 
 
 ##依赖项
 1. [FreeSWITCH](http://files.freeswitch.org/freeswitch-1.0.6.tar.gz)
@@ -13,6 +13,7 @@
 6. [mysql](http://downloads.mysql.com/archives/get/file/mysql-5.0.51b.tar.gz)
 7. [pcre](http://sourceforge.net/projects/pcre/files/pcre/7.7/pcre-7.7.tar.gz/download)
 8. [libcurl](http://curl.haxx.se/download/curl-7.21.0.tar.gz)
+9. [openssl](http://www.openssl.org)
 
 
 ##编译
