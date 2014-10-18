@@ -425,7 +425,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `address` WRITE;
 /*!40000 ALTER TABLE `address` DISABLE KEYS */;
-INSERT INTO `address` VALUES (1,10,'172.17.113.31',24,0,'ANY',NULL,'TO SHENZHEN TELECOM'),(2,10,'172.17.113.32',24,0,'ANY',NULL,'TO SHENZHEN TELECOM');
 /*!40000 ALTER TABLE `address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -498,7 +497,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `dialplan` WRITE;
 /*!40000 ALTER TABLE `dialplan` DISABLE KEYS */;
-INSERT INTO `dialplan` VALUES (13,0,1,1,'^[0-9]{8}',0,'','','ChinaTeleCom'),(16,0,1,1,'100[0-9][0-9]',0,'','','ChinaTeleCom'),(17,0,1,1,'^/*',0,'','','usrloc');
 /*!40000 ALTER TABLE `dialplan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -508,7 +506,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `dispatcher` WRITE;
 /*!40000 ALTER TABLE `dispatcher` DISABLE KEYS */;
-INSERT INTO `dispatcher` VALUES (4,1,'sip:10.36.159.19',0,1,'','yf-ccl16.yf01');
 /*!40000 ALTER TABLE `dispatcher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -536,7 +533,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `dr_gateways` WRITE;
 /*!40000 ALTER TABLE `dr_gateways` DISABLE KEYS */;
-INSERT INTO `dr_gateways` VALUES (1,2,'192.168.29.135',0,'','NULL',0,'Gateway USA'),(2,2,'192.168.29.134',0,NULL,NULL,0,'Gateway USA 2'),(3,1,'172.17.113.31',0,NULL,NULL,2,'China TeleCom'),(4,1,'172.17.113.32',0,NULL,NULL,2,'China TeleCom');
 /*!40000 ALTER TABLE `dr_gateways` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -546,7 +542,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `dr_groups` WRITE;
 /*!40000 ALTER TABLE `dr_groups` DISABLE KEYS */;
-INSERT INTO `dr_groups` VALUES (1,'.*','.*',0,'Everyone');
 /*!40000 ALTER TABLE `dr_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -556,7 +551,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `dr_gw_lists` WRITE;
 /*!40000 ALTER TABLE `dr_gw_lists` DISABLE KEYS */;
-INSERT INTO `dr_gw_lists` VALUES (1,'2,1','My Media Servers'),(2,'3','China TeleCom group');
 /*!40000 ALTER TABLE `dr_gw_lists` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -566,7 +560,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `dr_rules` WRITE;
 /*!40000 ALTER TABLE `dr_rules` DISABLE KEYS */;
-INSERT INTO `dr_rules` VALUES (1,'0','','',1,'0','#2',NULL,'Routes to ChinaTeleCom'),(2,'0','011','',0,'0','#1',NULL,'International Calls');
 /*!40000 ALTER TABLE `dr_rules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -630,7 +623,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `load_balancer` WRITE;
 /*!40000 ALTER TABLE `load_balancer` DISABLE KEYS */;
-INSERT INTO `load_balancer` VALUES (2,2,'SIP:172.17.113.13:5080','transc=32000; pstn=32000',2,''),(3,2,'SIP:172.17.113.14:5080','transc=32000; pstn=32000',2,''),(4,2,'SIP:172.17.113.15:5080','transc=32000; pstn=32000',2,'');
 /*!40000 ALTER TABLE `load_balancer` ENABLE KEYS */;
 UNLOCK TABLES;
 
