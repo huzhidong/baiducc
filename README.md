@@ -72,10 +72,7 @@
 1. [How To INSTALL](./INSTALL.md)
 
 #配置说明
-1. [ACD](wiki/acd)
-2. [IMS](wiki/ims)
-3. [IVR](wiki/ivr)
-4. [其他](wiki/Home)
+1. [访问wiki](https://github.com/Baidu-ecom/CC/wiki)
 
 #License
 1. [Apache 2.0](./LICENSE)
