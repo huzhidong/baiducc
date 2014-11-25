@@ -14,8 +14,8 @@ LIB_PATH += -L../../interface/output/acd/lib/linux/
 LIB_PATH += -L../../interface/output/ims/lib/linux/
 LIB_PATH += -L$(DEP_ROOT)/mysql/output/lib/
 
-+VERSION = "1-1-2-14"
-+TAG = ${VERSION}
+VERSION = "1-1-2-14"
+TAG = ${VERSION}
 #VERSION = ${shell echo $$SCMPF_MODULE_VERSION}
 #TAG = ${shell echo $$SCMPF_MODULE_TAG}
 CXXFLAGS = -Wall -W -pipe -Wno-unused-parameter -Wreorder -Wwrite-strings -Wswitch -Wno-sign-compare\
