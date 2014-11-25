@@ -33,7 +33,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool InitApService(std::string ApListenIp, int32_t ApListenPort, int32_t threadPoolNum);
@@ -44,7 +43,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     virtual bool ReLoadConfig(const std::map<std::string, std::string>& ctx);
@@ -56,7 +54,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     virtual bool GetAgents(ApAgentInfoListT& agentInfoList,

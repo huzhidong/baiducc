@@ -59,7 +59,6 @@ private:
      * @param fsno
      *
      * @return CcResultT
-     * @author  dangdawei(dangdawei@baidu.com)
      * @date    2013年09月18日 16时47分12秒
      */
     CcResultT create_ivr_outbound_session(

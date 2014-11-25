@@ -93,7 +93,6 @@ public:
      *    inside, and then call this->remove_session()
      *
      * @return  ture if the session successfully removed or not existed at all
-     * @author  dangdawei(dangdawei@baidu.com)
      * @date    2014-2-14
      */
     bool destroy_session(ims::SessionIdT id);
@@ -113,7 +112,6 @@ public:
      *        1. empty session lasts for more than one hour
      *        2. any session lasts for more than 24 hours
      *
-     * @author  dangdawei(dangdawei@baidu.com)
      * @date    2013年09月23日 17时14分42秒
      */
     void clear_dead_session();

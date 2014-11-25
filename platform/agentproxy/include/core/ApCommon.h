@@ -64,7 +64,6 @@ using namespace acd;
  * @brief   AP与ACD的连接状态
  * @see
  * @note
- * @author  caozhenxing(caozhenxing@baidu.com)
  * @date    2012年06月28日 12时59分21秒
  */
 enum APCONNACDSTATE {
@@ -79,7 +78,6 @@ enum APCONNACDSTATE {
  * @brief   AP保存的agentbar信息，用于回调事件推送
  * @see
  * @note
- * @author  caozhenxing(caozhenxing@baidu.com)
  * @date    2012年06月28日 13时03分12秒
  */
 struct AgentData {
@@ -104,7 +102,6 @@ typedef hash_map<std::string, AgentData*> MapAgentIdDataType; /*坐席工号、连接代
  * @brief   事件队列结构体，用于发送回调事件
  * @see
  * @note
- * @author  caozhenxing(caozhenxing@baidu.com)
  * @date    2012年06月28日 14时05分06秒
  */
 struct ApEventQ {

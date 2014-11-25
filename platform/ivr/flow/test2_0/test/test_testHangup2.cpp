@@ -18,7 +18,6 @@ int main(int argc, char **argv)
  
 /**
  * /home/zhangyue/callcloud/ivrserver/flow/test2_0//test/test_testHangup2.cpp ~ 2012/05/10 15:25:38
- * @author zhangyue(liyubei@baidu.com)
  * @version $Revision$ 
  * @description 
  *  

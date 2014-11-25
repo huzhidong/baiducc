@@ -8,7 +8,6 @@
  
 /**
  * @file include/parser.c
- * @author chenyuzhen(chenyuzhen@baidu.com)
  * @date 2011/08/24 17:53:49
  * @brief 
  *

@@ -62,7 +62,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时05分33秒
      */
     bool Init();
@@ -75,7 +74,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 12时59分09秒
      */
     bool SetMapAgentIdData(AgentData* agentInfo);
@@ -86,7 +84,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时07分04秒
      */
     bool DelMapAgentIdData(const std::string& agentId);
@@ -96,7 +93,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时07分04秒
      */
     bool ClearMapAgentData();
@@ -110,7 +106,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时07分30秒
      */
     bool ResetProxy(const std::string& agentId, AgentData* agentInfo);
@@ -124,7 +119,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月29日 17时23分25秒
      */
     bool GetAgentData(const std::string& agentId, AgentData& agentInfo);
@@ -138,7 +132,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月29日 17时23分25秒
      */
     bool GetAgentHandleById(const std::string agentId, int64_t& handle);
@@ -149,7 +142,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月29日 17时23分25秒
      */
     bool IsAgentHasExist(const std::string agentId);
@@ -160,7 +152,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月29日 17时23分25秒
      */
     bool UpdateAgentData(AgentData& agentinfo);
@@ -171,7 +162,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool SetAgentOldProxyNull(const std::string agentId, int64_t handle);
@@ -182,7 +172,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool SetAgentHandleById(const std::string agentId, int64_t handle);
@@ -194,7 +183,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void SetAgentFlag(const std::string agentId, int32_t flag);
@@ -206,7 +194,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void SendCallEvent(const AgentEventT& acdCallEvent, int32_t threadNo);
@@ -218,7 +205,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void SendOtherEvent(const OtherEventT& acdOtherEvent, int32_t threadNo);
@@ -230,7 +216,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void SendRouteEvent(const RouteEventT& acdRouteEvent, int32_t threadNo);
@@ -242,7 +227,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void SendMediaEvent(const MediaEventT& acdMediaEvent, int32_t threadNo);
@@ -252,7 +236,6 @@ public:
      * @return 心跳时间
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     int32_t GetHeartBeatTimeOut();
@@ -265,7 +248,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时08分14秒
      */
     bool AddAcdCallEvent(AgentEventT& event);
@@ -278,7 +260,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时08分27秒
      */
     bool AddAcdMediaEvent(MediaEventT& event);
@@ -291,7 +272,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时08分37秒
      */
     bool AddAcdRouteEvent(RouteEventT& event);
@@ -304,7 +284,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时08分47秒
      */
     bool AddAcdOtherEvent(OtherEventT& event);
@@ -317,7 +296,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时08分59秒
      */
     bool GetAcdCallEvent(AgentEventT& event, const int32_t threadNo);
@@ -330,7 +308,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时09分11秒
      */
     bool GetAcdMediaEvent(MediaEventT& event, const int32_t threadNo);
@@ -343,7 +320,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时09分22秒
      */
     bool GetAcdRouteEvent(RouteEventT& event, const int32_t threadNo);
@@ -356,7 +332,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时09分36秒
      */
     bool GetAcdOtherEvent(OtherEventT& event, const int32_t threadNo);
@@ -367,7 +342,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时09分54秒
      */
     bool CreateAcdCBThread();
@@ -377,7 +351,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool CreateApListenThread();
@@ -390,7 +363,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时10分03秒
      */
     bool IsQueueEmpty(const int32_t& threadNo);
@@ -401,7 +373,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时10分20秒
      */
     void HeartBeat();
@@ -412,7 +383,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时10分45秒
      */
     bool Backup();
@@ -423,7 +393,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时14分28秒
      */
     static AgentProxy* Instance() {
@@ -435,7 +404,6 @@ public:
      * @brief Destroy 销毁资源
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月29日 13时18分58秒
      */
     void Destroy();
@@ -445,7 +413,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 13时09分54秒
      */
     bool CreateCheckHBThread();
@@ -456,7 +423,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年07月01日 15时26分48秒
      */
     bool IsNeedApThreadShutdown();
@@ -469,7 +435,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool CreateClient(std::string Ip, int32_t Port, int32_t connectNum);
@@ -480,7 +445,6 @@ public:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年07月02日 14时08分36秒
      */
     void ClearHaveSendMsgNum();
@@ -490,7 +454,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool StartApListen();
@@ -500,7 +463,6 @@ public:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void ClearTimeOutAgentInfo(std::string agentId);
@@ -661,7 +623,6 @@ private:
     * @return
     * @see
     * @note
-    * @author  caozhenxing(caozhenxing@baidu.com)
     * @date    2013年03月25日
     */
     bool readConf(const char* conf_filepath);
@@ -671,7 +632,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool getApCommonConf(const char* conf_filepath);
@@ -681,7 +641,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool getAcdConf(const char* conf_filepath);
@@ -691,7 +650,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool getBgccConf(const char* conf_filepath);
@@ -701,7 +659,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年06月28日 19时55分35秒
      */
     bool Init_log();
@@ -711,7 +668,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void SetApThreadShutdown();
@@ -722,7 +678,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年07月09日 15时09分10秒
      */
     APCONNACDSTATE GetCtiService();
@@ -735,7 +690,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2012年07月09日 15时09分24秒
      */
     void SetCtiService(APCONNACDSTATE State);
@@ -745,7 +699,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool SetApClient(ApClient* client);
@@ -755,7 +708,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void AddHeartBeatCount();
@@ -765,7 +717,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void ClearHeartBeatCount();
@@ -775,7 +726,6 @@ private:
      * @return  异常心跳次数
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     int32_t GetHeartBeatCount();
@@ -785,7 +735,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool GetValidAcd();
@@ -795,7 +744,6 @@ private:
      * @return  成功：true;失败：false
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     bool TryConnAcd(std::string strIp, int32_t Port, APCONNACDSTATE state);
@@ -805,7 +753,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     void ReSignIn(APCONNACDSTATE state);
@@ -815,7 +762,6 @@ private:
      * @return  连接ID
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     std::string getProxyName(const std::map<std::string, std::string>& ctx);
@@ -825,7 +771,6 @@ private:
      * @return
      * @see
      * @note
-     * @author  caozhenxing(caozhenxing@baidu.com)
      * @date    2013年03月26日 21时23分25秒
      */
     std::string getProxyIP(const std::map<std::string, std::string>& ctx);
