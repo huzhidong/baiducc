@@ -15,7 +15,7 @@
 SRCTAR=boost_1_56_0.tar.gz
 
 if [ ! -f ${SRCTAR} ]; then
-    wget http://sourceforge.net/projects/boost/files/boost/1.56.0/boost_1_56_0.tar.gz/download;
+    wget http://sourceforge.net/projects/boost/files/boost/1.56.0/boost_1_56_0.tar.gz;
 fi
 
 if [ ! -f ${SRCTAR} ]; then

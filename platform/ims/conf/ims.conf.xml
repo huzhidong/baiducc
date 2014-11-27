@@ -2,8 +2,8 @@
 <document type="ims/xml">
 	<section type="service" description="ims basic run config">
 		<service type="main"    ip="127.0.0.1" port="9527"/>
-		<service type="monitor" ip="192.168.111.9" port="9011"/>
-		<service type="config"  ip="192.168.111.9" port="9012"/>
+		<service type="monitor" ip="127.0.0.1" port="9011"/>
+		<service type="config"  ip="127.0.0.1" port="9012"/>
     </section>
 
     <section type="param" description="run core param">
@@ -13,13 +13,11 @@
 	
 	<section type="client" description="allow/deny connect to ims">
 		<client type="ivr">
-			<allow data="192.168.111.0/24" />
-			<allow data="192.168.119.0/24" />
 			<allow data="127.0.0.0/24" />
 		</client>
 		
 		<client type="config">
-			<allow data="192.168.111.0/24" />
+			<allow data="127.0.0.0/24" />
 		</client>
 
 		<client type="acd">
@@ -27,7 +25,7 @@
 		</client>
 
 		<client type="monitor">
-			<allow data="192.168.111.0/24" />
+			<allow data="127.0.0.0/24" />
 		</client>
 	</section>
 	

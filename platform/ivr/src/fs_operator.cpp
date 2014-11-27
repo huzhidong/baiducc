@@ -155,7 +155,7 @@ bool fs_operator_t::record(esl_handle_t* handle,
         esl_execute(handle, CMD_SET, "RECORD_COPYRIGHT=(c) 2011 Baidu.com", callid.c_str());
         check_result(esl_event_get_header(handle->last_sr_event, REPLY_TEXT));
 
-        esl_execute(handle, CMD_SET, "RECORD_TITLE=callcloud@baidu.com", callid.c_str());
+        esl_execute(handle, CMD_SET, "RECORD_TITLE=callcloud@127.0.0.1", callid.c_str());
         check_result(esl_event_get_header(handle->last_sr_event, REPLY_TEXT));
 
         esl_execute(handle, CMD_SET, "RECORD_MIN_SEC=0", callid.c_str());

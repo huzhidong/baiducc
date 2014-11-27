@@ -25,12 +25,12 @@ Name = strDial2
 
 [Conn1]
 Name = CC1数据库
-ConnStr = 10.36.159.33:3306;root;123456
+ConnStr = 127.0.0.1:8080;root;123456
 ConnNum = 10
 
 [Conn2]
 Name = CC2数据库
-ConnStr = 10.36.159.33:3306;root;123456
+ConnStr = 127.0.0.1:8080;root;123456
 ConnNum = 5
 
 

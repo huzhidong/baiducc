@@ -8,7 +8,7 @@ Name = strTmp
 
 [Conn1]
 Name = CC1Êý¾Ý¿â
-ConnStr = 10.36.159.33:3306;root;123456
+ConnStr = 127.0.0.1:80;root;123456
 ConnNum = 20
 
 [Node1]

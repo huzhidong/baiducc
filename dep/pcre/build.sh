@@ -17,7 +17,7 @@
 SRCTAR=pcre-7.7.tar.gz
 
 if [ ! -f ${SRCTAR} ]; then
-    wget http://sourceforge.net/projects/pcre/files/pcre/7.7/pcre-7.7.tar.gz/download
+    wget http://sourceforge.net/projects/pcre/files/pcre/7.7/pcre-7.7.tar.gz
 fi
 
 if [ ! -f ${SRCTAR} ]; then

@@ -1207,7 +1207,7 @@ bool alarm_by_sms(std::string& content, const ::std::string& smslist) {
 
     for (uint32_t i = 0; i < number_vec.size(); i++) {
         std::ostringstream ostm;
-        ostm << "/bin/gsmsend -s 10.23.199.131:15003 -s 10.23.248.104:15003 ";
+        ostm << "/bin/gsmsend -s 0.0.0.0:0 -s 0.0.0.0:0 ";//use to send SMS
         ostm << number_vec[i] << "@'" << content << "'";
 
         switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "[IVR_LB]SEND SMS:cmd=%s\n",

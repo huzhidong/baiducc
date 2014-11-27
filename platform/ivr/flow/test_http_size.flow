@@ -21,7 +21,7 @@ type = HTTP
 descript = recv 20
 Outtype = POST
 timeout = 3
-Url = http://10.23.240.177:8900/ivrtest/sizetest?size=20
+Url = http://127.0.0.1:8080/ivrtest/sizetest?size=20
 Resp = result
 _Success = 3
 _Failure = 0
@@ -38,7 +38,7 @@ type = HTTP
 descript = recv 4095
 Outtype = POST
 timeout = 3
-Url = http://10.23.240.177:8900/ivrtest/sizetest?size=4095
+Url = http://127.0.0.1:8080/ivrtest/sizetest?size=4095
 Resp = result
 _Success = 5
 _Failure = 0
@@ -62,7 +62,7 @@ type = HTTP
 descript = recv 4095
 Outtype = POST
 timeout = 3
-Url = http://10.23.240.177:8900/ivrtest/sizetest?size=4095
+Url = http://127.0.0.1:8080/ivrtest/sizetest?size=4095
 Resp = result
 _Success = 8
 _Failure = 0
@@ -110,7 +110,7 @@ type = HTTP
 descript = recv 4096
 Outtype = POST
 timeout = 3
-Url = http://10.23.240.177:8900/ivrtest/sizetest?size=4096
+Url = http://127.0.0.1:8080/ivrtest/sizetest?size=4096
 Resp = result
 _Success = 0
 _Failure = 14
@@ -151,7 +151,7 @@ type = HTTP
 descript = recv 4097
 Outtype = POST
 timeout = 3
-Url = http://10.23.240.177:8900/ivrtest/sizetest?size=4097
+Url = http://127.0.0.1:8080/ivrtest/sizetest?size=4097
 Resp = result
 _Success = 0
 _Failure = 19

@@ -56,7 +56,7 @@ _failure=19
 
 [node19]
 type=http
-url=http://tc-crm-rd00.tc.baidu.com:8099/
+url=http://127.0.0.1:80/
 resp=name
 _success=20
 _failure=20

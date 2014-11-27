@@ -111,7 +111,7 @@ clean_up:
 }
 /*
 int main(){
-    char url[]="http://10.26.78.49:8010/login";
+    char url[]="http://127.0.0.1:80/login";
     char reqs[]="{\"agentid\":1001,\"agenttype\":1,\"optype\":\"system\",\"op\":\"login\",\"tab\":49849,\"param\":{}}";
     char* request=curl_escape( reqs , 0);
     char post[256];

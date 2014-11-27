@@ -33,12 +33,12 @@ Name = strHttpResp
 
 [Conn1]
 Name = CC1数据库
-ConnStr = 10.36.159.33:3306;root;123456
+ConnStr = 127.0.0.1:8080;root;123456
 ConnNum = 20
 
 [Conn2]
 Name = CC2数据库
-ConnStr = 10.36.159.33:3306;root;123456
+ConnStr = 127.0.0.1:8080;root;123456
 ConnNum = 10
 
 [Node1]
@@ -165,7 +165,7 @@ _Failure=102
 [Node602]
 Descript=HTTP调用
 Type=Http
-Url=http://10.36.159.33:8080/app/test.jsp?ani=${_ANI}
+Url=http://127.0.0.1:8080/app/test.jsp?ani=${_ANI}
 Resp=strHttpResp
 _Success=603
 _Failure=300
