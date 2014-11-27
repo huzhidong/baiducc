@@ -258,7 +258,7 @@ BOOL CSIPPhoneDlg::OnInitDialog()
 	char logfile[512];
 
 
-	::GetPrivateProfileString("settings","sipip","10.36.159.60",sipip,256,path);
+	::GetPrivateProfileString("settings","sipip","127.0.0.1",sipip,256,path);
 	::GetPrivateProfileString("settings","account","1105",account,256,path);
 	::GetPrivateProfileString("settings","pass","1234",pass,256,path);
 
