@@ -174,7 +174,7 @@ static void default_config(struct app_config *cfg)
 	//	    pj_get_sys_info()->info.ptr);
 
 	pj_ansi_sprintf(tmp, "PJSUA v%s %s", pj_get_version(),
-		"Windows");//baidu
+		"Windows");
 	pj_strdup2_with_null(app_config.pool, &cfg->cfg.user_agent, tmp);
 
 	pjsua_logging_config_default(&cfg->log_cfg);
@@ -2113,7 +2113,6 @@ pj_status_t phonelib_init(int local_sip_port,const char* log_file, int log_level
 		if (status != PJ_SUCCESS)
 			goto on_error;
 	}
-	////////baidu:special
 	status = pjsua_start();
 	if (status != PJ_SUCCESS)  
 		goto on_error;

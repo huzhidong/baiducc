@@ -411,36 +411,6 @@ void CMainFormView::getSysInfo()
 void CMainFormView::On32771()
 {
 	// TODO: 在此添加命令处理程序代码
-	/*
-	this->m_agentCtrl.SetMainCTIIP("10.36.159.19");
-	this->m_agentCtrl.SetBackCTIIP("10.36.159.19");
-	this->m_agentCtrl.SetCTIPort(10000);
-	this->m_agentCtrl.SetAgentID("2011");
-	this->m_agentCtrl.SetPassWord("2011123");
-	this->m_agentCtrl.SetDN("1205");
-	this->m_agentCtrl.SetServiceList("咨询");
-	this->m_agentCtrl.SetTimeOut(3000);
-	this->m_agentCtrl.SetAgentTag("");
-	this->m_agentCtrl.SetCustomerTag("agt");
-
-
-	this->m_agentCtrl.SetStatusChangeType(0);
-	this->m_agentCtrl.SetANIChangeType(0);
-	this->m_agentCtrl.SetLogLevel(2);
-	this->m_agentCtrl.SetAutoAnswer(1);
-	this->m_agentCtrl.SetForceSignIn(1);
-	this->m_agentCtrl.SetIsInitial(0);
-	this->m_agentCtrl.SetIsSignIn(0);
-	this->m_agentCtrl.SetIsShowCallOut(1);
-	this->m_agentCtrl.SetIsCallOut(1);
-	this->m_agentCtrl.SetEnableSeniorCall(0);
-
-	this->m_agentCtrl.SetSIPServerIP("10.36.159.60");
-	this->m_agentCtrl.SetSIPServerPort(8060);
-	this->m_agentCtrl.SetPhoneNum("1205");
-	this->m_agentCtrl.SetPhonePwd("1234");
-	this->m_agentCtrl.SetIsSIPPhone(0);
-	*/
 
 	this->getAgentData();
 	this->m_agentCtrl.SetMainCTIIP(this->m_strMainIP);
