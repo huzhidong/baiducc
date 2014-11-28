@@ -18,7 +18,7 @@ type=string
 
 [node20]
 type=assign
-exp=58270000
+exp=123456
 result=inikey
 _success=21
 _failure=21
