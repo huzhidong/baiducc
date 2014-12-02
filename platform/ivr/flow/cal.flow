@@ -28,7 +28,7 @@ name=num
 type=string
 
 [conn1]
-connstr=tc-cc-dev00.tc:6666;cc-ivr;123456
+connstr=127.0.0.1:6666;username;123456
 connnum=80
 
 
