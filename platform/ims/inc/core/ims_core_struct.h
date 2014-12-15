@@ -170,6 +170,7 @@ private:
         // boost release memory of bject_pool
         delete pims_channel_pool;
         delete pims_call_pool;
+        delete pstring_pool;
     }
 };
 

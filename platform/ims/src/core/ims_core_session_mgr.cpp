@@ -180,7 +180,9 @@ bool ims_session_manager_t::destroy_session(ims::SessionIdT id) {
 
         // session not locked, so the actuall channels in session may be changed by other thread,
         // Don't care it, because it's sematically impossible.
-        for (std::list<const char*>::iterator it = chls.begin(); it != chls.end(); ++it) {
+        std::list<const char*>::iterator it;
+        while (!chls.empty()) {
+            it=chls.begin(); 
             opr.opr().hangup(*it);
 
             callid_t callid = 0;
@@ -1165,12 +1167,14 @@ bool ims_session_manager_t::rt_del_req(ims::ReqIdT reqid) {
                 req->stop(); //thread is detached mode, don't need to join
             }
         }
-
-        for (string_map::iterator it = reqinfo->agent_dn.begin(); it != reqinfo->agent_dn.end(); ++it) {
+        string_map::iterator it;
+        while (!reqinfo->agent_dn.empty()) {
+            it = reqinfo->agent_dn.begin();
             rt_del_dn(it->first, ims::DnTypeT::AgentDn);
         }
 
-        for (string_map::iterator it = reqinfo->accessno.begin(); it != reqinfo->accessno.end(); ++it) {
+        while (reqinfo->accessno.empty()) {
+            it = reqinfo->accessno.begin();
             rt_del_dn(it->first, ims::DnTypeT::IvrANI);
         }
 
@@ -1180,13 +1184,16 @@ bool ims_session_manager_t::rt_del_req(ims::ReqIdT reqid) {
     }
 
     //delete ims_route_info
-    for (std::map<ims::RouteRequestIDT, ims_route_info_t>::iterator it = runtime.route_mgr.begin();
-            it != runtime.route_mgr.end(); ++it) {
+    std::map<ims::RouteRequestIDT,ims_route_info_t>::iterator it;
+    it = runtime.route_mgr.begin();
+    while (!runtime.route_mgr.empty()) {
         if (reqid == it->second.reqid || reqid == it->second.dest_reqid) {
             rt_del_route(it->first);
+            it = runtime.route_mgr.begin();
+        } else {
+            ++it;
         }
     }
-
     TRACE_LOG("delete reqid[%ld] related ims_route_info.", reqid);
 
     {
