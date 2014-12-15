@@ -470,25 +470,23 @@ void event_handler_t::handle_singlestepconference_event(const fs_event_t& evt, b
 
         ims::CallStateT state;
         bool has_customer = false;
-        if ((session_mgr->get_channel_callstate(chls.front(), state) &&
+        for (std::list<const char*>::iterator it = chls.begin();
+            it != chls.end(); ++it) {
+            if (session_mgr->get_channelnamebyid(evt.sessionid, *it, tmp) &&
+                !session_mgr->rt_query_dn(tmp.c_str(), DnTypeT::AgentDn)) {
+                has_customer = true;
+            }
+        }
+        if (((session_mgr->get_channel_callstate(chls.front(), state) &&
                 (state == CallStateT::SG_HalfAlertingState || state == CallStateT::SG_IdleState
                  || state == CallStateT::SG_UnknownState))
                 || (session_mgr->get_channel_callstate(chls.back(), state) &&
                     (state == CallStateT::SG_HalfAlertingState || state == CallStateT::SG_IdleState
-                     || state == CallStateT::SG_UnknownState))) {
-            for (std::list<const char*>::iterator it = chls.begin();
-                it != chls.end(); ++it) {
-                if (session_mgr->get_channelnamebyid(evt.sessionid, *it, tmp) &&
-                    !session_mgr->rt_query_dn(tmp.c_str(), DnTypeT::AgentDn)) {
-                    has_customer = true;
-                }
-            }
-            if (!has_customer) {
-                TRACE_LOG("one of the left two channels' state is alerting or idle, hangup the left two.");
-                session_mgr->update_session_operation(evt.sessionid, SOPR_MAKECALL, other_agtname.c_str());
-                opr.opr().hangup(chls.front());
-                opr.opr().hangup(chls.back());
-            }
+                     || state == CallStateT::SG_UnknownState))) && !has_customer) {
+            TRACE_LOG("one of the left two channels' state is alerting or idle, hangup the left two.");
+            session_mgr->update_session_operation(evt.sessionid, SOPR_MAKECALL, other_agtname.c_str());
+            opr.opr().hangup(chls.front());
+            opr.opr().hangup(chls.back());
         } else if (!binsert && opr_deviceno != edata.channel_name) {
             //be listened party hangup,all hangup
             session_mgr->update_session_operation(evt.sessionid, SOPR_MAKECALL, other_agtname.c_str());
