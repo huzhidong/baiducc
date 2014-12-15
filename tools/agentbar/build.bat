@@ -2,23 +2,24 @@
 if exist output rd /q /s output
 if not exist output mkdir output
 
-set LIBINIT="C:\Program Files\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat"
-set CMD_VC2003="C:\Program Files\Microsoft Visual Studio .NET 2003\Common7\IDE\Devenv"
+set LIBINIT="%VS100COMNTOOLS%/../Tools/vsvars32.bat"
+set CMD_VS2010="%VS100COMNTOOLS%/../IDE/Devenv"
 
-rem "build image plugin "
-%CMD_VC2003% "ccl_imgex\ccl_imgex.vcproj" /rebuild Release /project ccl_imgex
+rem "build image plugin"
+%CMD_VS2010% "ccl_imgex\ccl_imgex.vcxproj" /rebuild Release /project ccl_imgex
 
-rem "build main activex "
-%CMD_VC2003% "agentbarsrc\CCAgentBar.vcproj" /rebuild Release /project CCAgentBar
+rem "build main activex"
+%CMD_VS2010% "agentbarsrc\CCAgentBar.vcxproj" /rebuild Release /project CCAgentBar
 
 rem "build test project"
-%CMD_VC2003% "agentbartest\CCAgentBarTest.vcproj" /rebuild Debug /project CCAgentBarTest
-%CMD_VC2003% "agentbartest\CCAgentBarTest.vcproj" /rebuild Release /project CCAgentBarTest
+%CMD_VS2010% "agentbartest\CCAgentBarTest.vcxproj" /rebuild Release /project CCAgentBarTest
 
 call %LIBINIT%
 rem "create cab package"
-cabarc.exe -s 6144 n bin\CCAgentBar.cab bin\CCAgentBar.inf bin\CCAgentBar.ocx bin\ccl_imgex.dll
-signcode.exe -spc bin\CCAgentBar.spc -v bin\CCAgentBar.pvk bin\CCAgentBar.cab
+copy .\bin\cabarc.exe .\
+copy .\bin\signcode.exe .\
+cabarc.exe -s 6144 n .\bin\CCAgentBar.cab .\bin\CCAgentBar.inf .\bin\CCAgentBar.ocx .\bin\ccl_imgex.dll
+signcode.exe -spc .\bin\CCAgentBar.spc -v .\bin\CCAgentBar.pvk .\bin\CCAgentBar.cab
 
 copy .\bin\CCAgentBar.ocx output\
 copy .\bin\ccl_imgex.dll output\
