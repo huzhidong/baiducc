@@ -107,11 +107,11 @@ fi
 
 if [ -d "$PREFIX/conf" ]; then
     cp ../../../platform/fw-mod/record/mod_ccl_record/conf/ccl_record.conf.xml $PREFIX/conf/autoload_configs/
-    cp ../../../platform/fw-mod/ivrloadbalance/ivr_loadbalance.conf $PREFIX/conf/autoload_configs/
+    mkdir -p $PREFIX/conf/ivr_loadbalance
+    cp ../../../platform/fw-mod/ivrloadbalance/ivr_loadbalance.conf $PREFIX/conf/ivr_loadbalance/
     cp $ROOT/patch/autoload_configs/event_socket.conf.xml $PREFIX/conf/autoload_configs/
     cp $ROOT/patch/autoload_configs/logfile.conf.xml $PREFIX/conf/autoload_configs/
-
-    mv $PREFIX/conf $PREFIX/conf.old
+    cp $ROOT/patch/sip_profiles/agent.xml $PREFIX/conf/sip_profiles/
     mkdir -p $PREFIX/conf-new/autoload_configs
     cp $ROOT/patch/autoload_configs/modules.conf.xml $PREFIX/conf-new/autoload_configs/
 fi

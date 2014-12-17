@@ -1173,7 +1173,7 @@ bool ims_session_manager_t::rt_del_req(ims::ReqIdT reqid) {
             rt_del_dn(it->first, ims::DnTypeT::AgentDn);
         }
 
-        while (reqinfo->accessno.empty()) {
+        while (!reqinfo->accessno.empty()) {
             it = reqinfo->accessno.begin();
             rt_del_dn(it->first, ims::DnTypeT::IvrANI);
         }
