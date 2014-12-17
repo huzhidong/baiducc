@@ -1,0 +1,11 @@
+ <!--<param name="aggressive-nat-detection" value="true"/>-->                    
+ <param name="inbound-codec-negotiation" value="generous"/>                      
+ <param name="nonce-ttl" value="60"/>                                            
+ <param name="auth-calls" value="false"/>                                        
+ <!--DO NOT USE HOSTNAMES, ONLY IP ADDRESSES IN THESE SETTINGS! -->                                                                                              
+ <param name="rtp-ip" value="127.0.0.1"/>
+ <param name="sip-ip" value="127.0.0.1"/>
+ <param name="ext-rtp-ip" value="auto-nat"/>                                     
+ <param name="ext-sip-ip" value="auto-nat"/>                                     
+ <param name="rtp-timeout-sec" value="3600"/>
+
