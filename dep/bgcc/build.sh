@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SRCTAR=v2.2.4.tar.gz
+SRCTAR=v2.2.5.tar.gz
 
 if [ ! -f ${SRCTAR} ]; then
-    curl --location-trusted -k -O https://github.com/BaiduCC/BGCC/archive/v2.2.4.tar.gz
+    curl --location-trusted -k -O https://github.com/BaiduCC/BGCC/archive/v2.2.5.tar.gz
 fi
 
 if [ ! -f ${SRCTAR} ]; then
@@ -27,6 +27,6 @@ fi
 
 tar xzf ${SRCTAR}
 
-make -C BGCC-2.2.4
+make -C BGCC-2.2.5
 
-cp -r BGCC-2.2.4/output ./
+cp -r BGCC-2.2.5/output ./
