@@ -18,8 +18,6 @@
 -- Current Database: `acddb`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `acddb` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
 USE `acddb`;
 
 --
@@ -64,8 +62,6 @@ UNLOCK TABLES;
 --
 -- Current Database: `ccclouddb`
 --
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `ccclouddb` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `ccclouddb`;
 
@@ -396,8 +392,6 @@ UNLOCK TABLES;
 --
 -- Current Database: `osips_db`
 --
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `osips_db` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `osips_db`;
 
