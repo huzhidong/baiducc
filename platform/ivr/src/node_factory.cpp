@@ -50,6 +50,8 @@
 #include "node_getassociatedata.h"
 #include "node_whatweekday.h"
 #include "node_makecall.h"
+#include "node_broadcast.h"
+#include "node_broadcast_num.h"
 
 const char* node_factory::NODE_ANSWER = "answer";
 const char* node_factory::NODE_HANGUP = "hangup";
@@ -85,6 +87,8 @@ const char* node_factory::NODE_REQUEST_RESULT = "requestresponsecompare";
 
 const char* node_factory::NODE_WHATWEEKDAY = "whatweekday";
 const char* node_factory::NODE_MAKECALL = "makecall";
+const char* node_factory::_s_node_broadcast = "broadcast";
+const char* node_factory::_s_node_broadcast_num = "broadcastnumber";
 
 NodeBase* node_factory::create_node(const uint32_t id,
                                     const string& name, const string& type,
@@ -153,6 +157,10 @@ NodeBase* node_factory::create_node(const uint32_t id,
         node = new(std::nothrow) NodeWhatWeekday(id, name, type, desc, keymap);
     } else if (strcasecmp(type.c_str(), NODE_MAKECALL) == 0) {
         node = new(std::nothrow) NodeMakeCall(id, name, type, desc, keymap);
+    } else if (strcasecmp(type.c_str(), _s_node_broadcast) == 0) {
+        node = new(std::nothrow) ivr::NodeBroadcast(id, name, type, desc, keymap);
+    } else if (strcasecmp(type.c_str(), _s_node_broadcast_num) == 0) {
+        node = new(std::nothrow) ivr::NodeBroadcastNum(id, name, type, desc, keymap);
     }
 
     if (node && (!node->load_other())) {

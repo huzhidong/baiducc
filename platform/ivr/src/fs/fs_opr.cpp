@@ -931,6 +931,97 @@ int32_t fs_opr_t::play(const char* uuid, const char* file, uint32_t count) {
     FUNC_END();
 }
 
+int32_t fs_opr_t::broadcast_num(const char* callid1, const char* callid2,
+        const char* data, const char* basepath, bool isStr)
+{
+    FUNC_BEGIN();
+    (void)szcmd;
+    (void)fs_resp;
+    string playlist = "";
+    if (isStr) {
+        string playstr = string(data);
+        IVR_DEBUG("playstr:[%s]", data);
+        uint32_t i = 0;
+        for (i = 0; i < playstr.size(); i++) {
+            playlist = playlist + basepath + "system/num" + data[i] + ".wav&";
+        }
+    } else {
+        uint32_t tmp = atoi(data);
+        string str_number;
+        std::ostringstream ostm;
+        ostm.str("");
+        ostm << tmp;
+        str_number = ostm.str();
+
+        uint32_t numlength = str_number.size();
+        IVR_TRACE("STARS tmp:%u; str:%s; len:%u", tmp, str_number.c_str(), numlength);
+        for (uint32_t i = 0; i < numlength; i++) {
+            uint32_t small = (numlength-i-1) % 4;
+            uint32_t big   = (numlength-i-1) / 4;
+            bool zerotag = false;
+            if (small == 0) {
+                if (str_number.at(i) != '0') {
+                    if (zerotag) {
+                        playlist = playlist + basepath + "system/num0.wav&";
+                    }
+                    playlist = playlist + basepath + "system/num" + str_number.at(i) + ".wav&";
+                }
+                zerotag = false;
+                if (big > 0) {
+                    char tmp = '4' + big;
+                    playlist = playlist + basepath + "system/dimension" + tmp + ".wav&";
+                }
+            }
+            else {
+                if (str_number.at(i) == '0') {
+                    zerotag = true;
+                }
+                else {
+                    if (zerotag) {
+                        playlist = playlist + basepath + "system/num0.wav&";
+                    }
+                    playlist = playlist + basepath + "system/num" + str_number.at(i) + ".wav&";
+                    char tmp = '0' + small;
+                    playlist = playlist + basepath + "system/dimension" + tmp + ".wav&";
+                }
+            }
+        }
+    } 
+    if (uuid_broadcast(callid1, callid2, playlist.c_str()) != IVR_SUCCESS) {
+        IVR_TRACE("%s,%s,∑≈“Ù ß∞‹[%s]", callid1, callid2, playlist.c_str());
+    } else {
+        ret = IVR_SUCCESS;
+    }
+    FUNC_END();
+}
+
+int32_t fs_opr_t::uuid_broadcast(const char * callid1, const char * callid2, const char * file)
+{
+    FUNC_BEGIN();
+    snprintf(szcmd, LEN_512, _s_cmd_uuidbroadcast_fmt, callid1, file);
+    IVR_TRACE("uuid_broadcast (%s)", szcmd);
+
+    if (set_channel_attribute(callid1, "playback_terminators=none") &&
+        set_channel_attribute(callid1, "playback_delimiter=&") &&
+        esl_execute(&_handle, "break", NULL, callid1) == ESL_SUCCESS && //stop before play
+        is_result_ok(fs_resp = esl_event_get_header(_handle.last_sr_event, "Reply-Text")) &&
+        set_channel_attribute(callid2, "playback_terminators=none") &&
+        set_channel_attribute(callid2, "playback_delimiter=&") &&
+        esl_execute(&_handle, "break", NULL, callid2) == ESL_SUCCESS && //stop before play
+        is_result_ok(fs_resp = esl_event_get_header(_handle.last_sr_event, "Reply-Text")) &&
+        esl_send_recv(&_handle, szcmd) == ESL_SUCCESS) {
+        if (is_result_ok(fs_resp = esl_event_get_body(_handle.last_sr_event))) {
+            ret = IVR_SUCCESS;
+            IVR_TRACE("uuid_broadcast success");
+        }
+        else {
+            IVR_WARN("fs:uuid_broadcast(%s,%s);ret(%s)", callid1, file, fs_resp);
+        } 
+    }
+
+    FUNC_END();
+}
+
 int32_t fs_opr_t::send_dtmf(const char* uuid, const char* keys) {
     FUNC_BEGIN();
     (void)szcmd;
@@ -1128,6 +1219,7 @@ const char* fs_opr_t::CMD_ORIGINATE_FMT =
     "bgapi originate {return_ring_ready=false,bridge_early_media=true,bypass_media=false,"
     "origination_caller_id_number=%s,origination_caller_id_name=%s,IVRDATA=%llu}%s "
     "&bridge([origination_caller_id_number=%s,origination_caller_id_name=%s,call_timeout=%u,IVRDATA=%llu]%s)\n\n";
+const char* fs_opr_t::_s_cmd_uuidbroadcast_fmt = "api uuid_broadcast %s %s both\n\n";
 
 const char* fs_opr_t::CMD_RECORD_FMT = "api uuid_record %s start %s\n\n";
 const char* fs_opr_t::CMD_STOPRECORD_FMT = "api uuid_record %s stop all\n\n";

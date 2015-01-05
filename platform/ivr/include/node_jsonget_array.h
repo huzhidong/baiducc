@@ -58,14 +58,12 @@ public:
 private:
     string _input;          ///< node输入json串
     string _valueindex;     ///< 值下标
-    string _key;            ///< node查找的key值
     string _valuetype;      ///< node中获取值类型
     string _value;          ///< node查找到的key值
     string _reason;         ///< node中失败原因值
 
     const static char* PARAM_INPUT;
     const static char* PARAM_VALUEINDEX;
-    const static char* PARAM_KEY;
     const static char* PARAM_VALUETYPE;
     const static char* PARAM_VALUE;
     const static char* PARAM_REASON;

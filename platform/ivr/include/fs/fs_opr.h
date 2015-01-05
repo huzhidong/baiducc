@@ -133,6 +133,9 @@ public:
     //////////////////////////////////////////√ΩÃÂ¥¶¿Ì//////////////////////////////////////
     int32_t stop_media(const char* uuid);
     int32_t play(const char* uuid, const char* file, uint32_t count = 1);
+    int32_t uuid_broadcast(const char * callid1, const char * callid2, const char * file);
+    int32_t broadcast_num(const char * callid1, const char * callid2, const char* data,
+                 const char* basepath, bool isStr);
     int32_t record(const char* uuid, const char* file, bool isstart);
     int32_t playnum(const char* uuid, const char* data, const char* basepath, bool isStr);
     int32_t send_dtmf(const char* uuid, const char* keys);
@@ -159,6 +162,7 @@ private:
     const static char* CMD_UUIDSENDDTMF_FMT;
     const static char* CMD_RECORD_FMT;
     const static char* CMD_STOPRECORD_FMT;
+    const static char * _s_cmd_uuidbroadcast_fmt;
 
     const static char* EVENT_NORMAL;
     const static char* EVENT_HEARTBEAT;

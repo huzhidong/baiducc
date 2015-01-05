@@ -79,6 +79,8 @@ private:
 
     const static char* NODE_WHATWEEKDAY;
     const static char* NODE_MAKECALL;
+    const static char * _s_node_broadcast;
+    const static char * _s_node_broadcast_num;
 };
 
 #endif  //__NODE_FACTORY_H_

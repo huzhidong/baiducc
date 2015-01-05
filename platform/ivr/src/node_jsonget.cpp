@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "node_jsonget.h"
-#include <json/json.h>
 #include <sstream>
+#include <json/json.h>
+#include "node_jsonget.h"
 
 NodeJsonGet::NodeJsonGet(const uint32_t id, const string& name,
                          const string& type, const string& desc, const key_map_t& keymap)
@@ -55,7 +55,7 @@ NodeBase* NodeJsonGet::run(base_script_t* param) {
 
     if (var_reason.type != INT32) {
         IVR_WARN("变量%s 的类型错误", _reason.c_str());
-        //(*(std::string*)var_reason.pvalue).assign("5");
+        (*(std::string*)var_reason.pvalue).assign("5");
         goto LEAVE;
     }
 
@@ -66,7 +66,7 @@ NodeBase* NodeJsonGet::run(base_script_t* param) {
         //获取json串
         json_object* obj = json_tokener_parse(input.c_str());
 
-        if (is_error(obj) || NULL == obj) {
+        if (is_error(obj) || NULL == obj || !json_object_is_type(obj, json_type_object)) {
             IVR_TRACE("未找到需要赋值的变量");
             (*(std::string*)var_reason.pvalue).assign("1");
             goto LEAVE;
@@ -91,8 +91,18 @@ NodeBase* NodeJsonGet::run(base_script_t* param) {
             goto LEAVE;
         }
 
+        json_type jtype = json_object_get_type(obj_value);
+
         //根据需要转化
         if (0 == strcasecmp(_valuetype.c_str(), PARAMITEM_TYPE_STRING)) {
+            if (jtype != json_type_string && jtype != json_type_object &&
+                    jtype != json_type_array) {
+                IVR_TRACE("json值类型非STRING、OBJECT、ARRAY类型");
+                (*(std::string*)var_reason.pvalue).assign("5");
+                json_object_put(obj);
+                goto LEAVE;
+            }
+
             const char* cstr_value = json_object_get_string(obj_value);
 
             if (NULL == cstr_value) {
@@ -117,6 +127,13 @@ NodeBase* NodeJsonGet::run(base_script_t* param) {
             json_object_put(obj);
             goto LEAVE;
         } else if (0 == strcasecmp(_valuetype.c_str(), PARAMITEM_TYPE_INT32)) {
+            if (jtype != json_type_int) {
+                IVR_TRACE("json值类型非INT类型");
+                (*(std::string*)var_reason.pvalue).assign("5");
+                json_object_put(obj);
+                goto LEAVE;
+            }
+
             int32_t int32_value = json_object_get_int(obj_value);
 
             if (var_value.type != INT32) {
@@ -135,7 +152,14 @@ NodeBase* NodeJsonGet::run(base_script_t* param) {
             json_object_put(obj);
             goto LEAVE;
         } else if (0 == strcasecmp(_valuetype.c_str(), PARAMITEM_TYPE_BOOL)) {
-            json_bool bool_value = json_object_get_boolean(obj_value);
+            if (jtype != json_type_boolean) {
+                IVR_TRACE("json值类型非BOOL类型");
+                (*(std::string*)var_reason.pvalue).assign("5");
+                json_object_put(obj);
+                goto LEAVE;
+            }
+
+            bool bool_value = json_object_get_boolean(obj_value);
 
             if (var_value.type != INT32) {
                 IVR_TRACE("赋值变量类型错误");
