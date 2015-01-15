@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/bash 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,9 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+DIR="bgcc boost freeswitch json-c libcurl libxml2 mysql pcre opensips"
+
 build()
 {
-    for d in `dir`; do
+    for d in ${DIR}; do
         if [ -d $d ]; then
             cd $d && if [ -f build.sh ]; then bash build.sh; else python build.py; fi && cd ..;
         fi
@@ -23,7 +24,7 @@ build()
 
 clean()
 {
-    for d in `dir`; do
+    for d in ${DIR}; do
         if [ -d $d ]; then
             rm -fr $d/$d*;
             rm -fr $d/output;

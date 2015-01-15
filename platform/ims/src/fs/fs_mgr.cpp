@@ -140,18 +140,14 @@ int32_t fs_mgr_t::update_runinfo(uint32_t fs_no, event_data_heartbeat_t& run) {
         return IMS_FAIL_LOCK;
     }
 
-    //DEBUG_LOG("fs_no(=%u)", fs_no);
-    //DEBUG_LOG("cur_session(=%u)", run.cur_session);
-    //DEBUG_LOG("all_session(=%u)", run.all_session);
-    //DEBUG_LOG("cpu_idle(=%u)", run.cpu_idle);
-
     run.used_times = 0;
 
     event_data_heartbeat_t* pinfo = NULL;
 
     if (_runinfo.count(fs_no) == 0 || NULL == _runinfo[fs_no]) {
-        //pinfo=_rp.createp<event_data_heartbeat_t>();
         pinfo = _evt_hb_pool.construct();
+    } else {
+        pinfo = _runinfo[fs_no];
     }
 
     if (NULL != pinfo) {
