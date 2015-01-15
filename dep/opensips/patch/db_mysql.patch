@@ -1,0 +1,102 @@
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/dbase.c ../opensips-1.6.4-2-tls/modules/db_mysql/dbase.c
+--- opensips-1.6.4-2-tls/modules/db_mysql/dbase.c	2010-12-17 16:08:31.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/dbase.c	2011-10-10 17:05:17.000000000 +0800
+@@ -34,10 +34,10 @@
+ 
+ #include <stdio.h>
+ #include <string.h>
+-#include <mysql/mysql.h>
+-#include <mysql/errmsg.h>
+-#include <mysql/mysqld_error.h>
+-#include <mysql/mysql_version.h>
++#include <mysql.h>
++#include <errmsg.h>
++#include <mysqld_error.h>
++#include <mysql_version.h>
+ #include "../../mem/mem.h"
+ #include "../../dprint.h"
+ #include "../../db/db_query.h"
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/db_mysql.c ../opensips-1.6.4-2-tls/modules/db_mysql/db_mysql.c
+--- opensips-1.6.4-2-tls/modules/db_mysql/db_mysql.c	2009-10-16 08:37:24.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/db_mysql.c	2011-10-10 17:06:31.000000000 +0800
+@@ -34,7 +34,7 @@
+ #include "dbase.h"
+ #include "db_mysql.h"
+ 
+-#include <mysql/mysql.h>
++#include <mysql.h>
+ 
+ unsigned int db_mysql_ping_interval = 5 * 60; /* Default is 5 minutes */
+ unsigned int db_mysql_timeout_interval = 2;   /* Default is 6 seconds */
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/Makefile ../opensips-1.6.4-2-tls/modules/db_mysql/Makefile
+--- opensips-1.6.4-2-tls/modules/db_mysql/Makefile	2009-12-11 02:59:19.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/Makefile	2011-10-10 17:33:29.000000000 +0800
+@@ -24,18 +24,11 @@
+ 
+ 	# use standard know paths
+ 	# mysql.h locations (freebsd,openbsd  solaris)
+-	DEFS +=-I$(LOCALBASE)/include -I$(LOCALBASE)/include/mysql \
+-		-I$(LOCALBASE)/mysql/include/mysql -I$(LOCALBASE)/mysql/include \
+-		-I$(SYSBASE)/include/mysql
++	DEFS+=-I../../../../mysql/output/include
+ 
+ 	# libmysqlclient locations on RH/Suse, Solaris /OpenBSD, FreeBSD
+ 	# (Debian does the right thing and puts it in /usr/lib)
+-	LIBS=-L$(SYSBASE)/lib/mysql -L$(LOCALBASE)/lib -L$(LOCALBASE)/lib/mysql \
+-		-L$(LOCALBASE)/mysql/lib/mysql/ \
+-		-L$(LOCALBASE)/mysql/lib \
+-		-L$(SYSBASE)/lib64/mysql \
+-		-lm -lmysqlclient -lz
+-
++	LIBS=-L../../../../mysql/output/lib -lm -lmysqlclient -lz
+ endif
+ 
+ include ../../Makefile.modules
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/my_con.c ../opensips-1.6.4-2-tls/modules/db_mysql/my_con.c
+--- opensips-1.6.4-2-tls/modules/db_mysql/my_con.c	2009-10-16 08:37:24.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/my_con.c	2011-10-10 17:18:06.000000000 +0800
+@@ -24,7 +24,7 @@
+ #include "my_con.h"
+ #include "db_mysql.h"
+ #include "dbase.h"
+-#include <mysql/mysql_version.h>
++#include <mysql_version.h>
+ #include "../../mem/mem.h"
+ #include "../../dprint.h"
+ #include "../../ut.h"
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/my_con.h ../opensips-1.6.4-2-tls/modules/db_mysql/my_con.h
+--- opensips-1.6.4-2-tls/modules/db_mysql/my_con.h	2010-01-26 00:07:20.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/my_con.h	2011-10-10 17:06:08.000000000 +0800
+@@ -28,7 +28,7 @@
+ #include "../../db/db_id.h"
+ 
+ #include <time.h>
+-#include <mysql/mysql.h>
++#include <mysql.h>
+ 
+ 
+ #define PREP_STMT_VAL_LEN	1024
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/res.c ../opensips-1.6.4-2-tls/modules/db_mysql/res.c
+--- opensips-1.6.4-2-tls/modules/db_mysql/res.c	2009-10-16 08:37:24.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/res.c	2011-10-10 17:18:23.000000000 +0800
+@@ -25,7 +25,7 @@
+ 
+ 
+ #include <string.h>
+-#include <mysql/mysql.h>
++#include <mysql.h>
+ #include "../../db/db_res.h"
+ #include "../../mem/mem.h"
+ #include "../../dprint.h"
+diff -uNr opensips-1.6.4-2-tls/modules/db_mysql/val.h ../opensips-1.6.4-2-tls/modules/db_mysql/val.h
+--- opensips-1.6.4-2-tls/modules/db_mysql/val.h	2009-10-16 08:37:24.000000000 +0800
++++ ../opensips-1.6.4-2-tls/modules/db_mysql/val.h	2011-10-10 17:05:40.000000000 +0800
+@@ -24,7 +24,7 @@
+ #ifndef VAL_H
+ #define VAL_H
+ 
+-#include <mysql/mysql.h>
++#include <mysql.h>
+ #include "../../db/db_val.h"
+ #include "../../db/db.h"
+ 

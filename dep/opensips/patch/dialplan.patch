@@ -1,0 +1,19 @@
+diff -uNr opensips-1.6.4-2-tls/modules/dialplan/Makefile patch/opensips-1.6.4-2-tls/modules/dialplan/Makefile
+--- opensips-1.6.4-2-tls/modules/dialplan/Makefile	2010-12-17 16:26:32.000000000 +0800
++++ patch/opensips-1.6.4-2-tls/modules/dialplan/Makefile	2011-10-11 09:37:39.000000000 +0800
+@@ -21,13 +21,8 @@
+ 	LIBS = $(shell pcre-config --libs)
+ 
+ else
+-
+-	DEFS+=-I$(SYSBASE)/include/pcre -I$(LOCALBASE)/include/pcre \
+-			-I$(LOCALBASE)/include -I/opt/csw/include -I/usr/sfw/include \
+-			-I/usr/local/include
+-	LIBS=-I$(LOCALBASE)/lib -L/opt/csw/lib -L/usr/sfw/lib -L/usr/local/lib \
+-			-lpcre
+-
++	DEFS+=-I../../../../pcre/output/include
++	LIBS=-L../../../../pcre/output/lib -lpcre
+ endif
+ 
+ 
