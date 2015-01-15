@@ -58,8 +58,13 @@ build()
     if [ ! -d ${RELEASE_BASE}/freeswitch ]; then 
         mkdir -p ${RELEASE_BASE}/freeswitch; 
     fi
+    
+    if [ ! -d ${RELEASE_BASE}/opensips ]; then 
+        mkdir -p ${RELEASE_BASE}/opensips; 
+    fi
 
     cp -r ${DEP_BASE}/freeswitch/output/*  ${RELEASE_BASE}/freeswitch/
+    cp -r ${DEP_BASE}/opensips/output/*  ${RELEASE_BASE}/opensips/
 }
     
 case "$1" in
