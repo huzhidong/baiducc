@@ -18,6 +18,10 @@ DIST_VERSION="opensips-1.6.4-2-tls"
 PWD=`pwd`
 PREFIX=$PWD/output
 
+if [ -f "output/opensips-1.6.4-2-tls.tgz" ]; then
+    exit 0;
+fi
+
 file="$DIST_VERSION"_src.tar.gz
 
 
@@ -87,3 +91,5 @@ if [ ! -f "$PREFIX/$DIST_VERSION.tgz" ]; then
 fi
 
 echo "build binary done success"
+
+exit 0;

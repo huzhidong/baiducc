@@ -16,6 +16,10 @@
 
 SRCTAR=pcre-7.7.tar.gz
 
+if [ -f "output/include/pcre.h" -a -f "output/lib/libpcre.a" ]; then
+    exit 0;
+fi
+
 if [ ! -f ${SRCTAR} ]; then
     wget http://sourceforge.net/projects/pcre/files/pcre/7.7/pcre-7.7.tar.gz
 fi
@@ -77,3 +81,4 @@ rm -f $PREFIX/lib/*.la
 
 echo "done!"
 
+exit 0

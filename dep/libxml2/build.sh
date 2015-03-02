@@ -18,6 +18,10 @@
 #libxml2的源码tar包文件名
 SRCTAR=libxml2-2.6.30.tar.gz
 
+if [ -f "output/include/libxml.h" -a -f "output/lib/libxml2.a" ]; then
+    exit 0;
+fi
+
 if [ ! -f ${SRCTAR} ]; then
     wget http://xmlsoft.org/sources/old/libxml2-2.6.30.tar.gz
 fi

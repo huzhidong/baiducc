@@ -16,6 +16,10 @@
 
 SRCTAR=json-c-0.10-20120530.tar.gz
 
+if [ -f "output/include/json/json.h" -a -f "output/lib/libjson.a" ]; then
+    exit 0;
+fi
+
 if [ ! -f ${SRCTAR} ]; then
     curl --location-trusted -k -O https://github.com/json-c/json-c/archive/${SRCTAR}
 fi

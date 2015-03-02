@@ -21,6 +21,10 @@ ROOT=`pwd`
 PREFIX=$ROOT/output
 VOICE_DIR=$ROOT/voice
 
+if [ -f "output/libs/esl/include/esl.h" -a -f "output/libs/esl/libesl.a" ]; then
+    exit 0;
+fi
+
 echo "prepare build..."
 
 if [ -z "$DIST_VERSION" ]; then

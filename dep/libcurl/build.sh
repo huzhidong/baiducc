@@ -16,6 +16,10 @@
 
 SRCTAR=curl-7.21.0.tar.gz
 
+if [ -f "output/include/curl/curl.h" -a -f "output/lib/libcurl.a" ]; then
+    exit 0;
+fi
+
 if [ ! -f ${SRCTAR} ]; then
     wget http://curl.haxx.se/download/${SRCTAR}
 fi

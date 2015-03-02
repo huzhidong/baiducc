@@ -18,6 +18,10 @@
 #mysql的源码tar包文件名
 MYSQL_SRCTAR=mysql-5.0.51b.tar.gz
 
+if [ -f "output/include/mysql.h" -a -f "output/lib/libmysqlclient.a" ]; then
+    exit 0;
+fi
+
 if [ ! -f ${MYSQL_SRCTAR} ]; then
     wget http://downloads.mysql.com/archives/get/file/mysql-5.0.51b.tar.gz
 fi

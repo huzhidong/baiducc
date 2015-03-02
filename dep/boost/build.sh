@@ -14,6 +14,10 @@
 
 SRCTAR=boost_1_56_0.tar.gz
 
+if [ -f "output/include/boost/config.hpp" -a -f "output/lib/libboost_system.a" ]; then
+    exit 0;
+fi
+
 if [ ! -f ${SRCTAR} ]; then
     wget http://sourceforge.net/projects/boost/files/boost/1.56.0/boost_1_56_0.tar.gz;
 fi

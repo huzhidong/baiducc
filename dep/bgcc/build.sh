@@ -14,10 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SRCTAR=v2.2.5.tar.gz
+SRCTAR=v2.2.6.tar.gz
+
+
+if [ -f "output/include/bgcc.h" -a -f "output/include/openssl/ssl.h" -a -f "output/lib/libbgcc.a" -a -f "output/lib/libssl.a" ]; then
+    exit 0;
+fi
 
 if [ ! -f ${SRCTAR} ]; then
-    curl --location-trusted -k -O https://github.com/BaiduCC/BGCC/archive/v2.2.5.tar.gz
+    curl --location-trusted -k -O https://github.com/BaiduCC/BGCC/archive/v2.2.6.tar.gz
 fi
 
 if [ ! -f ${SRCTAR} ]; then
@@ -25,8 +30,7 @@ if [ ! -f ${SRCTAR} ]; then
     exit 1;
 fi
 
-tar xzf ${SRCTAR}
+tar xzf ${SRCTAR} && make -C BGCC-2.2.6 && cp -r BGCC-2.2.6/output ./ && exit 0
 
-make -C BGCC-2.2.5
 
-cp -r BGCC-2.2.5/output ./
+exit 1
