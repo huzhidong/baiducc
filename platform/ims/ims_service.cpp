@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
         tmp = conf.param[ICPT_MAXSESSION];
         pmgr->maxsession((uint32_t)atoi(tmp));
     } else {
-        pmgr->maxsession(MAX_SESSION);
+        pmgr->maxsession(global_data_t::MAX_SESSION);
     }
 
     TRACE_LOG("starting freeswitch manager...");

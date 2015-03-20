@@ -66,7 +66,7 @@ int32_t ims_request_t::operator()(const bool* isstoped, void* param) {
             if ((ims_tool_t::get_timestamp_s() - last_heartbeat) >= 3) {
                 last_heartbeat = ims_tool_t::get_timestamp_s();
                 heartbeat.timestamp = ims_tool_t::get_timestamp_ms();
-                ims::CcResultT result = proxy.SendOtherEvent(heartbeat);
+                proxy.SendOtherEvent(heartbeat);
 
                 if (proxy.get_errno() != 0) {
                     WARNING_LOG("event push to client(%s) failed,reqid=%lu", _conn_info.c_str(), _reqid);

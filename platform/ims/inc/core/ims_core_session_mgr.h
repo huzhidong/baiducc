@@ -376,10 +376,10 @@ public:
         bgcc::Guard<bgcc::Mutex> lock(&runtime.mutex);
 
         if (lock.is_locked()) {
-            if (count > MAX_SESSION) {
+            if (count > global_data_t::MAX_SESSION) {
                 WARNING_LOG("config max session > ims support max session(%u > %u)", 
-                    count, MAX_SESSION);
-                count = MAX_SESSION;
+                    count, global_data_t::MAX_SESSION);
+                count = global_data_t::MAX_SESSION;
             }
             runtime.max_session = count;
         }
