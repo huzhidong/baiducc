@@ -61,12 +61,25 @@ void acd_send_event::Method() {
         }
 
         if (p_event->m_callback_proxy->get_errno() != 0) {
-            acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
-                                        "thread flag:%d event id:%d Communication Error:%d", m_thread_flag, p_event->m_event_id,
-                                        p_event->m_callback_proxy->get_errno());
+            if (p_event->m_event_type == AGENT_EVENT) {
+                acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
+                        "thread flag:%d event id:%d sid:%lld evtname:%s Communication Error:%d", m_thread_flag, p_event->m_event_id,
+                        p_event->m_agent_event.sessionId, p_event->m_agent_event.eventId.get_desc().c_str(),
+                        p_event->m_callback_proxy->get_errno());
+            } else {
+                acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
+                    "thread flag:%d event id:%d Communication Error:%d", m_thread_flag, p_event->m_event_id,
+                    p_event->m_callback_proxy->get_errno());
+            }
         } else {
-            acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
-                                        "thread flag:%d event id:%d Communication Success", m_thread_flag, p_event->m_event_id);
+            if (p_event->m_event_type == AGENT_EVENT) {
+                acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+                    "thread flag:%d event id:%d sid:%lld evtname:%s Communication Success", m_thread_flag, p_event->m_event_id,
+                    p_event->m_agent_event.sessionId, p_event->m_agent_event.eventId.get_desc().c_str());
+            } else {
+                acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+                    "thread flag:%d event id:%d Communication Success", m_thread_flag, p_event->m_event_id);
+            }
         }
 
         acd_tool::write_acd_event_log(*p_event);
@@ -123,7 +136,22 @@ void acd_send_event_manager::send_event(SendEventT* p_event, int64_t handle) {
 
     vector<acd_send_event*>::size_type thread_flag = static_cast<vector<acd_send_event*>::size_type>
             (handle % m_max_thread);
-    acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
-                                "thread flag:%d event id:%d in queue", thread_flag, p_event->m_event_id);
+    
+    if (p_event->m_event_type == AGENT_EVENT) {
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+            "thread flag:%d event id:%d sid:%lld evtname:%s in queue", thread_flag, p_event->m_event_id,
+            p_event->m_agent_event.sessionId, p_event->m_agent_event.eventId.get_desc().c_str());
+    
+    }
+    else if (p_event->m_event_type == MEDIA_EVENT) {
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+            "thread flag:%d event id:%d sid:%lld evtname:%s in queue", thread_flag, p_event->m_event_id,
+            p_event->m_media_event.sessionId, p_event->m_media_event.eventType.get_desc().c_str());
+    }
+    else {
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+            "thread flag:%d event id:%d in queue", thread_flag, p_event->m_event_id);
+    }
+
     m_event_arrey[thread_flag]->in_queue(p_event);
 }

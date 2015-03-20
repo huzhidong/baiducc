@@ -220,8 +220,6 @@ typedef struct req_info {
     string_map accessno;
     bool is_master;
     req_info() {
-        //agent_dn.create(global_data_t::MAX_SESSION);
-        //accessno.create(global_data_t::MAX_SESSION);
         is_master = false;
     }
 

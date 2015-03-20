@@ -59,9 +59,6 @@ private:
 
     ims_session_manager_t() {
         runtime.isrunning = true;
-        //session_table.create(global_data_t::MAX_SESSION );
-        //channel_table.create(global_data_t::MAX_SESSION);
-        //channelname_table.create(global_data_t::MAX_SESSION);
         dn_pool.init(global_data_t::MAX_SESSION);
         session_pool.init(global_data_t::MAX_SESSION);
     }
@@ -379,6 +376,11 @@ public:
         bgcc::Guard<bgcc::Mutex> lock(&runtime.mutex);
 
         if (lock.is_locked()) {
+            if (count > MAX_SESSION) {
+                WARNING_LOG("config max session > ims support max session(%u > %u)", 
+                    count, MAX_SESSION);
+                count = MAX_SESSION;
+            }
             runtime.max_session = count;
         }
     }

@@ -255,6 +255,10 @@ int32_t fs_opr_t::get_event(fs_event_t& event, uint32_t timeout) {
                 get_head_val("Channel-Name", event.event_data.normal.channel_name, LEN_64);
                 std::string deviceno;
 
+                if (strncasecmp(event.event_data.normal.channel_name, "freetdm", 7) == 0) {
+                    get_head_val("variable_channel_name", event.event_data.normal.channel_name, LEN_64);
+                }
+
                 if (ims_tool_t::chlname2no(event.event_data.normal.channel_name, deviceno)) {
                     strncpy(event.event_data.normal.deviceno, deviceno.c_str(), LEN_64);
                 } else {

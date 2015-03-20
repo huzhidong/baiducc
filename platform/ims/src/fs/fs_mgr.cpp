@@ -320,16 +320,11 @@ int32_t fs_mgr_t::decision_fs(uint32_t& fs_no) {
         event_data_heartbeat_t* curr = iter->second;
         bool change = false;
 
-        if (curr->cpu_idle > fs_data.cpu_idle + 20) {
+        if (curr->cur_session + curr->used_times * 2 < fs_data.cur_session + fs_data.used_times * 2) {
             change = true;
-        } else if (curr->cpu_idle >= (fs_data.cpu_idle > 20 ? fs_data.cpu_idle - 20 : 0)) {
-            if (curr->cur_session + curr->used_times * 2 < fs_data.cur_session + fs_data.used_times * 2) {
+        } else if (curr->cur_session + curr->used_times * 2 == fs_data.cur_session + fs_data.used_times * 2) {
+            if (key < fs_no) {
                 change = true;
-            } else if (curr->cur_session + curr->used_times * 2 == fs_data.cur_session + fs_data.used_times *
-                       2) {
-                if (key < fs_no) {
-                    change = true;
-                }
             }
         }
 
@@ -343,10 +338,6 @@ int32_t fs_mgr_t::decision_fs(uint32_t& fs_no) {
             fs_data.used_times = curr->used_times;
             final = curr;
         }
-
-        //if(curr->cpu_idle == 99 && curr->cur_session + curr->used_times*2 > 1000) {
-        //    ++heavyload_node_count;
-        //}
 
         ++iter;
     }

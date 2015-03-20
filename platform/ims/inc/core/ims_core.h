@@ -96,7 +96,7 @@ enum ims_state_signal_t {
 };
 
 typedef struct ims_global_data {
-    const static uint32_t MAX_SESSION = 2048;         ///<  单台IMS支持的session
+    const static uint32_t MAX_SESSION = 10240;        ///<  单台IMS支持的session
     const static uint32_t MAX_REQUEST = 1024;         ///<  最多客户端对象个数
     const static uint32_t DN_SIZE = 64;               ///<  座席分机最大长度
     const static uint32_t MAX_OBJ_PER_SESSION = 16;   ///<  session中各种对象的最多个数
