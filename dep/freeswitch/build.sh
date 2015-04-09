@@ -88,6 +88,11 @@ echo "begin to build..."
 sed -i '14764,14782s/^/#&/g' configure
 CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=$PREFIX
 
+if [ $? != 0 ] ; then
+	echo "./configure FAILED! EXIT!";
+	exit 1;
+fi
+
 echo "begin compiling libedit library..."
 make -C libs/libedit/ 
 echo "end compiling libedit library..."
