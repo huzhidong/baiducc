@@ -31,8 +31,7 @@ OUTPUT_PATH = ./output
 
 VERSION=${shell echo $$SCMPF_MODULE_VERSION}
 
-LDFLAGS = -livr -lims -lesl -lbgcc -lcurl -lpthread -luuid  -lmysqlclient -lmysqlclient_r -lmystrings -lmysys -lssl -lcrypto -lrt -lz -ljson -lboost_system  -ldl
-#LDFLAGS = -livr -lims -lesl -lbgcc -lcurl -lpthread -luuid  -lmysqlclient -lmysqlclient_r -lmystrings -lmysys -lssl -lcrypto -lldap -llber -lrt -lz -ljson -lboost_system  -ldl
+LDFLAGS = -livr -lims -lesl -lbgcc -lcurl -lpthread -luuid  -lmysqlclient -lmysqlclient_r -lmystrings -lmysys -lssl -lcrypto -lldap -llber -lrt -lz -ljson -lboost_system  -ldl
 CXX_FLAGS = -DSCMPF_MODULE_VERSION=\"$(VERSION)\" -Wall -pipe -Wno-unused-parameter -Wno-reorder -Wwrite-strings -Wswitch -g \
                    -fPIC -Winline -Wreturn-type -Wtrigraphs -Wformat -Wparentheses -Wpointer-arith \
 				   -fthreadsafe-statics
