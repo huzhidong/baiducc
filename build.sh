@@ -41,13 +41,27 @@ build()
     # 2. interface
     # 3. platform
 
-    cd ${DEP_BASE} && bash build.sh && cd ..
+    ret=0
+    cd ${DEP_BASE} && bash build.sh; ret=$? && cd ..
+
+    if [ $ret != 0 ]; then
+        exit $ret;
+    fi
     
-    cd ${ROOT_DIR} && make -C ${INC_BASE}
+    cd ${ROOT_DIR} && make -C ${INC_BASE}; ret=$?
+    
+    if [ $ret != 0 ]; then
+        exit $ret;
+    fi
     
     for d in ${PLAT_SVR}; do
         make -C ${PLAT_BASE}/$d;
 
+	if [ $? != 0 ]; then
+		echo "build $d FAILED! EXIT!"
+		exit ;
+	fi
+	
         if [ ! -d ${RELEASE_BASE}/$d ]; then 
             mkdir -p ${RELEASE_BASE}/$d; 
         fi

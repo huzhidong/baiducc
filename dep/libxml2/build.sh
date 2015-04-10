@@ -23,7 +23,11 @@ if [ -f "output/include/libxml.h" -a -f "output/lib/libxml2.a" ]; then
 fi
 
 if [ ! -f ${SRCTAR} ]; then
-    wget http://xmlsoft.org/sources/old/libxml2-2.6.30.tar.gz
+    wget --tries=3 -T 10 http://xmlsoft.org/sources/old/libxml2-2.6.30.tar.gz
+    if [ $? != 0 ]; then
+        echo "download libxml2 FAILED! EXIT!";
+        exit;
+    fi
 fi
 
 if [ ! -f ${SRCTAR} ]; then
@@ -45,6 +49,12 @@ cd $SRC
 #设置configure参数
 #安装到$INSTALL, 可以在这后面继续添加其他编译参数, 
 ./configure --prefix=$INSTALL --with-pic=yes --with-threads=yes
+
+if [ $? != 0 ]; then
+    echo "configure FAILED! EXIT!";
+    exit;
+fi
+
 #编译并安装
 make; make install
 

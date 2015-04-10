@@ -24,8 +24,8 @@ if [ ! -f ${SRCTAR} ]; then
     wget http://sourceforge.net/projects/pcre/files/pcre/7.7/pcre-7.7.tar.gz
 fi
 
-if [ ! -f ${SRCTAR} ]; then
-    echo "can't find ${SRCTAR}, build failed";
+if [ $? != 0 -o ! -f ${SRCTAR} ]; then
+    echo "can't find ${SRCTAR} or invalid ${SRCTAR}, build failed";
     exit 1;
 fi
 

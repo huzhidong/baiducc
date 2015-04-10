@@ -17,7 +17,14 @@ build()
 {
     for d in ${DIR}; do
         if [ -d $d ]; then
-            cd $d && if [ -f build.sh ]; then bash build.sh; else python build.py; fi && cd ..;
+	    ret=0;
+            cd $d && if [ -f build.sh ]; then bash build.sh; ret=$?;  else python build.py; ret=$?; fi && cd ..;
+	    if [ $ret == 0 ]; then
+	    	echo "BUILD $d SUCCESS!";
+            else
+		echo "BUILD $d FAILED!";
+		exit $ret;
+	    fi
         fi
     done
 }

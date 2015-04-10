@@ -47,6 +47,12 @@ cd $MYSQL_SRC
 #设置configure参数
 #安装到$MYSQL_INSTALL, 可以在这后面继续添加其他编译参数, 
 CFLAGS=-fPIC ./configure --prefix=$MYSQL_INSTALL --with-charset=gbk --with--enable-local-infile --with-extra-charset=all --enable-thread-safe-client
+
+if [ $? != 0 ]; then
+    echo "configure FAILED! EXIT!";
+    exit 1;
+fi
+
 #编译并安装
 make; make install
 
