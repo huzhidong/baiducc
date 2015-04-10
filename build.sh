@@ -48,19 +48,20 @@ build()
         exit $ret;
     fi
     
-    cd ${ROOT_DIR} && make -C ${INC_BASE}; ret=$?
+    cd ${ROOT_DIR} && make clean -C ${INC_BASE}; make -C ${INC_BASE}; ret=$?
     
     if [ $ret != 0 ]; then
         exit $ret;
     fi
     
     for d in ${PLAT_SVR}; do
+        make clean -C ${PLAT_BASE}/$d;
         make -C ${PLAT_BASE}/$d;
 
-	if [ $? != 0 ]; then
-		echo "build $d FAILED! EXIT!"
-		exit ;
-	fi
+	    if [ $? != 0 ]; then
+	    	echo "build $d FAILED! EXIT!"
+	    	exit ;
+	    fi
 	
         if [ ! -d ${RELEASE_BASE}/$d ]; then 
             mkdir -p ${RELEASE_BASE}/$d; 
