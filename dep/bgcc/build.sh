@@ -17,7 +17,7 @@
 SRCTAR=v2.2.7.tar.gz
 
 
-if [ -f "output/include/bgcc.h" -a -f "output/include/openssl/ssl.h" -a -f "output/lib/libbgcc.a" -a -f "output/lib/libssl.a" ]; then
+if [ -f ${SRCTAR} -a -f "output/include/bgcc.h" -a -f "output/include/openssl/ssl.h" -a -f "output/lib/libbgcc.a" -a -f "output/lib/libssl.a" ]; then
     exit 0;
 fi
 
