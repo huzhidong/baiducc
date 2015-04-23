@@ -21,32 +21,32 @@
 USE `acddb`;
 
 --
--- Data for table `agenttbl`
+-- Data for table `AgentTbl`
 --
 
-LOCK TABLES `agenttbl` WRITE;
-/*!40000 ALTER TABLE `agenttbl` DISABLE KEYS */;
-/*!40000 ALTER TABLE `agenttbl` ENABLE KEYS */;
+LOCK TABLES `AgentTbl` WRITE;
+/*!40000 ALTER TABLE `AgentTbl` DISABLE KEYS */;
+/*!40000 ALTER TABLE `AgentTbl` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Data for table `restreasontbl`
+-- Data for table `RestReasonTbl`
 --
 
-LOCK TABLES `restreasontbl` WRITE;
-/*!40000 ALTER TABLE `restreasontbl` DISABLE KEYS */;
-INSERT INTO `restreasontbl` VALUES (1,'吃饭'),(2,'上厕所'),(3,'抽烟'),(4,'午休');
-/*!40000 ALTER TABLE `restreasontbl` ENABLE KEYS */;
+LOCK TABLES `RestReasonTbl` WRITE;
+/*!40000 ALTER TABLE `RestReasonTbl` DISABLE KEYS */;
+INSERT INTO `RestReasonTbl` VALUES (1,'吃饭'),(2,'上厕所'),(3,'抽烟'),(4,'午休');
+/*!40000 ALTER TABLE `RestReasonTbl` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Data for table `skillidtbl`
+-- Data for table `SkillIdTbl`
 --
 
-LOCK TABLES `skillidtbl` WRITE;
-/*!40000 ALTER TABLE `skillidtbl` DISABLE KEYS */;
-INSERT INTO `skillidtbl` VALUES (5,'咨询'),(6,'test'),(7,'投诉'),(8,'客服'),(9,'销售');
-/*!40000 ALTER TABLE `skillidtbl` ENABLE KEYS */;
+LOCK TABLES `SkillIdTbl` WRITE;
+/*!40000 ALTER TABLE `SkillIdTbl` DISABLE KEYS */;
+INSERT INTO `SkillIdTbl` VALUES (5,'咨询'),(6,'test'),(7,'投诉'),(8,'客服'),(9,'销售');
+/*!40000 ALTER TABLE `SkillIdTbl` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

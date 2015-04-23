@@ -23,13 +23,13 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `acddb` /*!40100 DEFAULT CHARACTER SET 
 USE `acddb`;
 
 --
--- Table structure for table `agenttbl`
+-- Table structure for table `AgentTbl`
 --
 
-DROP TABLE IF EXISTS `agenttbl`;
+DROP TABLE IF EXISTS `AgentTbl`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `agenttbl` (
+CREATE TABLE `AgentTbl` (
   `Id` int(11) NOT NULL auto_increment,
   `AgentId` varchar(64) default NULL,
   `AgentPwd` varchar(64) default NULL,
@@ -40,13 +40,13 @@ CREATE TABLE `agenttbl` (
 SET character_set_client = @saved_cs_client;
 
 --
--- Table structure for table `restreasontbl`
+-- Table structure for table `RestReasonTbl`
 --
 
-DROP TABLE IF EXISTS `restreasontbl`;
+DROP TABLE IF EXISTS `RestReasonTbl`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `restreasontbl` (
+CREATE TABLE `RestReasonTbl` (
   `Id` int(11) NOT NULL auto_increment,
   `RestReason` varchar(255) default NULL,
   PRIMARY KEY  (`Id`)
@@ -54,13 +54,13 @@ CREATE TABLE `restreasontbl` (
 SET character_set_client = @saved_cs_client;
 
 --
--- Table structure for table `skillidtbl`
+-- Table structure for table `SkillIdTbl`
 --
 
-DROP TABLE IF EXISTS `skillidtbl`;
+DROP TABLE IF EXISTS `SkillIdTbl`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `skillidtbl` (
+CREATE TABLE `SkillIdTbl` (
   `Id` int(11) NOT NULL auto_increment,
   `SkillName` varchar(255) default NULL,
   PRIMARY KEY  (`Id`)
