@@ -62,6 +62,8 @@ typedef struct event_data_normal {
     char ivr_data[LEN_128 + 1];
 
     char reason[LEN_128 + 1];
+
+    char trunck[LEN_512 + 1];
 } event_data_normal_t;
 
 typedef struct event_data_heartbeat {

@@ -36,6 +36,7 @@ NodeBase* node_bridgeex_t::run(base_script_t* param) {
     string called;
     string calltype;
     string bgmfile;
+    bool bghungup = false;
     bool usebgm = true;
     std::string callid;
     fw_id_t fs_no = param->fid;
@@ -44,6 +45,13 @@ NodeBase* node_bridgeex_t::run(base_script_t* param) {
 
     if (ptmp) {
         callid = *(std::string*)ptmp;
+    }
+
+    if (!_bghungup.empty()){
+        if (strcasecmp(_bghungup.c_str(), "true") == 0){
+            IVR_WARN("hungup after bridge set true");
+            bghungup = true;
+        }
     }
 
     if (strcasecmp(_bgtype.c_str(), PARAMITEM_RING) != 0
@@ -61,16 +69,17 @@ NodeBase* node_bridgeex_t::run(base_script_t* param) {
 
     if (true == parse_expression(_caller, param->name_var_map, caller)
             && true == parse_expression(_called, param->name_var_map, called)
-            && true == parse_expression(_calltype, param->name_var_map, calltype)) {
-        IVR_TRACE("caller=%s,called=%s,bgtype=%s(usebgm:%d),bgmfile=%s", caller.c_str(), called.c_str(),
-                  _bgtype.c_str(), usebgm, bgmfile.c_str());
+            && true == parse_expression(_calltype, param->name_var_map, calltype)
+            && true == parse_expression(_callid, param->name_var_map, callid)) {
+        IVR_TRACE("caller=%s,called=%s,callid=%s,bgtype=%s(usebgm:%d),bgmfile=%s", caller.c_str(),
+                called.c_str(), callid.c_str(), _bgtype.c_str(), usebgm, bgmfile.c_str());
 
         fs_opr_t* opr = NULL;
 
         if (fs_mgr_t::instance()->fetch_opr(fs_no, &opr) == IVR_SUCCESS) {
             if (NULL != opr) {
                 if (IVR_SUCCESS == opr->bridgeex(callid.c_str(), caller.c_str(), called.c_str(), calltype != "0",
-                                                 usebgm, bgmfile.c_str())) {
+                                                 usebgm, bgmfile.c_str(), bghungup)) {
                     exit = EXIT_SUCC;
                 } else {
                     IVR_WARN("bridgeex failed(caller: %s, called: %s)", _caller.c_str(), _called.c_str());
@@ -106,6 +115,7 @@ NodeBase* node_bridgeex_t::run(base_script_t* param) {
 bool node_bridgeex_t::load_other() {
     valid_str(_key_map, PARAM_BGTYPE, _bgtype);
     valid_str(_key_map, PARAM_BGMFILE, _bgmfile);
+    valid_str(_key_map, _s_param_bghungup, _bghungup);
     return NodeResource::load_other()
            && valid_str(_key_map, PARAM_CALLER, _caller)
            && valid_str(_key_map, PARAM_CALLED, _called)
@@ -124,6 +134,7 @@ const char* node_bridgeex_t::PARAM_CALLED = "callednumber";
 const char* node_bridgeex_t::PARAM_CALLTYPE = "calltype";
 const char* node_bridgeex_t::PARAM_BGTYPE = "bgtype";
 const char* node_bridgeex_t::PARAM_BGMFILE = "bgmfile";
+const char* node_bridgeex_t::_s_param_bghungup = "bghungup";
 
 const char* node_bridgeex_t::PARAMITEM_BGM = "bgm";
 const char* node_bridgeex_t::PARAMITEM_RING = "ring";

@@ -351,6 +351,8 @@ struct base_script_t {
     string channel_id;
     string callsource; // Freeswitch IP
 
+    string trunck;//data when transfer from other ivr
+
     IvrTimer* timer;                ///<IVR计时器，session创建后确定
 
     // ims infomation
@@ -439,7 +441,8 @@ typedef struct _sys_var_t {
         HANGUP_CAUSE = 4,
         CALL_BEGIN_TIME = 5, ///< 呼叫到达平台的时间
         CALL_ANSWER_TIME = 6, ///< 呼叫被接起的时间
-        END = 7
+        TRUNCK = 7,
+        END = 8
     };
 } sys_var_t;
 

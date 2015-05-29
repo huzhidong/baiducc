@@ -187,6 +187,11 @@ int32_t fs_opr_t::get_event(fs_event_t& event, uint32_t timeout) {
                 getIP = szcmd;
             }
 
+            if (IVR_SUCCESS == get_var("IPTKC", szcmd, LEN_512)) {
+                snprintf(event.event_data.normal.trunck, LEN_512, "%s", szcmd);
+                IVR_DEBUG("get trunck (%s)", event.event_data.normal.trunck);
+            }
+
             if (strcasecmp(event.name, "BACKGROUND_JOB") == 0) {
                 get_head_val("Job-Command", szcmd, LEN_512);
 
@@ -345,6 +350,7 @@ int32_t fs_opr_t::get_event(fs_event_t& event, uint32_t timeout) {
             //2）有sessionid的振铃视为外呼后的振铃
             //3）其它事件根据uuid查询
             else if (0 == strcasecmp(event.name, "CHANNEL_PROGRESS_MEDIA") ||
+                     0 == strcasecmp(event.name, "CHANNEL_ORIGINATE") ||
                      0 == strcasecmp(event.name, "CHANNEL_PROGRESS")) {
                 if (0 != event.sessionid &&
                         IvrInstanceManager::get_instance()->search_ivr_instance(event.sessionid)) {
@@ -764,7 +770,7 @@ int32_t fs_opr_t::bridgeonly(const char* uuid1, const char* uuid2) {
 }
 
 int32_t fs_opr_t::bridgeex(const char* uuid, const char* caller, const char* called,
-                           bool external, bool usbgm, const char* bgmfile) {
+                           bool external, bool usbgm, const char* bgmfile,  bool bghungup) {
     FUNC_BEGIN();
     (void)fs_resp;
     ostringstream ostm;
@@ -787,8 +793,16 @@ int32_t fs_opr_t::bridgeex(const char* uuid, const char* caller, const char* cal
         }
     }
 
-    if (set_channel_attribute(uuid, "hangup_after_bridge=false") &&
-            set_channel_attribute(uuid, "bypass_media=false") &&
+    if (bghungup){
+        IVR_DEBUG("set hangup_after_bridge=true");
+        set_channel_attribute(uuid, "hangup_after_bridge=true");
+    }
+    else{
+        IVR_DEBUG("set hangup_after_bridge=false");
+        set_channel_attribute(uuid, "hangup_after_bridge=false");
+    }
+
+    if (set_channel_attribute(uuid, "bypass_media=false") &&
             set_channel_attribute(uuid, "continue_on_fail=true")) {
         set_channel_attribute(uuid, "export_vars=IVR_SESSION_ID");
         //set_channel_attribute(uuid,"export_vars=IVRDATA");

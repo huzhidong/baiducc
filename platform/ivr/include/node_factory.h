@@ -81,6 +81,8 @@ private:
     const static char* NODE_MAKECALL;
     const static char * _s_node_broadcast;
     const static char * _s_node_broadcast_num;
+    const static char* _s_node_base64_decode;
+    const static char* _s_node_base64_encode;
 };
 
 #endif  //__NODE_FACTORY_H_

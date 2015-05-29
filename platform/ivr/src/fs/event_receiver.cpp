@@ -110,6 +110,7 @@ int32_t callevent_recv_t::operator()(const bool*, void* param) {
                         param->ani = string(evt.event_data.normal.caller_no);
                         param->dnis = string(evt.event_data.normal.called_no);
                         param->callid = string(evt.event_data.normal.uuid);
+                        param->trunck = string(evt.event_data.normal.trunck);
                         param->channel_name = string(evt.event_data.normal.channel_name);
                         param->channel_id = string(evt.event_data.normal.uuid);
                         param->callsource = ivr_tools_t::get_address(_info->get_address());

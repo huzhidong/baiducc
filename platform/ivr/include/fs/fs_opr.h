@@ -116,7 +116,7 @@ public:
     int32_t unbridge(const char* uuid);
     int32_t bridgeonly(const char* uuid1, const char* uuid2);
     int32_t bridgeex(const char* uuid, const char* caller, const char* called, bool external,
-                     bool usbgm, const char* bgmfile);
+                     bool usbgm, const char* bgmfile,  bool bghungup);
     int32_t dial(ivr_session_id_t sessionid, const char* called_number,
                  const char* caller_number, uint32_t timeout = 30, bool external = true);
 

@@ -73,9 +73,11 @@ private:
     const static char* PARAM_BGMFILE;         ///<背景音文件
     std::string _caller, _called, _calltype;  ///<主被叫
     std::string _bgtype, _bgmfile;
+    std::string _bghungup;
 
     const static char* PARAMITEM_BGM;
     const static char* PARAMITEM_RING;
+    const static char* _s_param_bghungup;
     /**
      * @brief
      *

@@ -163,6 +163,7 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     script.callsource = ((inbound_script_t*)_param)->callsource;
     script.channel_name = ((inbound_script_t*)_param)->channel_name;
     script.channel_id = ((inbound_script_t*)_param)->channel_id;
+    script.trunck = ((inbound_script_t*)_param)->trunck;
     ivr_tools_t::build_vars(script.flow->name_var_map, script.name_var_map);
 
     // don't add channel information here
@@ -214,6 +215,7 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::ANI]].pvalue = script.ani;
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::DNIS]].pvalue = script.dnis;
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::CALLID]].pvalue = script.callid;
+    *(string*)script.name_var_map[SYS_VAR[sys_var_t::TRUNCK]].pvalue = script.trunck;
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::RECORD_FILE]].pvalue = "";
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::HANGUP_CAUSE]].pvalue = "user_hangup";
 
@@ -226,6 +228,7 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     ost << "ANI:\t" << script.ani << endl;
     ost << "DNIS:\t" << script.dnis << endl;
     ost << "CALLID:\t" << script.callid << endl;
+    ost << "TRUNCK:\t" << script.trunck << endl;
     ost << "FID:\t" << script.fid << endl;
     ost << "SESSIONID:\t" << script.session_id << endl;
     ost << "================";
