@@ -1251,8 +1251,8 @@ LONG CCCAgentBarCtrl::Consult(LPCTSTR consultNum, LPCTSTR showANI, LPCTSTR showD
 		return AGENTBARERROR_BAR_UNSIGNIN;
 	}
 
-	if(consultType < 0 || consultType > 1)// ע�⣡
-		consultType = 0;
+	//if(consultType < 0 || consultType > 1)// ע�⣡
+	//	consultType = 0;
 
 	CString ani, dnis;
 	switch(p_m_Bar->m_intANIChangeType)

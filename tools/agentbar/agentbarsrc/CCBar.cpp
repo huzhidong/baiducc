@@ -1921,6 +1921,15 @@ LONG CCCBar::BReset()
 LONG CCCBar::BMakeCall(const char *dest, const char *showANI, const char *showDest, acd::CallModeT callMode, acd::CallTypeT callType)
 {
 	LONG ret = AGENTBARERROR_SUCCESS;
+        string t_dest = string(dest);
+        unsigned int len = t_dest.length();
+        for (int i = 0; i < len; i++){
+            if ((t_dest.at(i) < '0' || t_dest.at(i) > '9') && t_dest.at(i) != '-'){
+                ret = AGENTBARERROR_BAR_WRONGNUM;
+                Tool::m_Logger.WriteLog("CCCBar", "BMakeCall", "dest num is not in true format", ret);
+                return ret;
+            }
+        }
 	if(m_AgentStatus != acd::AgentStatusT::AsBusyState)
 	{
 		ret = AGENTBARERROR_BAR_WRONGSTATE;
@@ -2033,7 +2042,9 @@ LONG CCCBar::BConsult(const char *consultNum, const char *showANI, const char *s
 			callerId = m_strDN;
 			break;
 		default:
-			callerId = m_strDN;
+                     CString ss;
+			ss.Format("%d", callType);
+			callerId = ss + "#" + m_strDN;
 			break;
 		}
 		ret = m_acd.AcdConsult(m_strAgentID, callerId, consultNum, showANI, showDest, callType);
