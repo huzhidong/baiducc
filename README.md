@@ -4,7 +4,7 @@
 
 #联系方式 	
 
-1. [**在线咨询**](http://qiao.baidu.com/v3/?module=default&controller=im&action=index&ucid=7880242&type=n&siteid=5677496) 	
+1. [**在线咨询**](http://p.qiao.baidu.com//im/index?siteid=5677496&ucid=7880242) 	
 2. QQ群： **83412519**
 
 #平台特性
