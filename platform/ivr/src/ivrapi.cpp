@@ -22,6 +22,9 @@
 #include "cpu_manager.h"
 #include "lock.h"
 #include "common.h"
+#include "ivr_data_collection.h"
+
+using ivr::IvrCallDataCollection;
 
 extern std::auto_ptr<ConfManager> g_conf_manager;
 ivr::IvrResultT IvrApi_Imp::ReloadConfig(const ivr::ReloadFlagT& type,
@@ -142,6 +145,12 @@ ivr::IvrResultT IvrApi_Imp::Heartbeat(std::string& ivrinfo, const str2str_map& c
     return 0;
 }
 
+ivr::IvrResultT IvrApi_Imp::GetCallInfo(int32_t type, const std::string& input, std::string& result,
+                                        const str2str_map& ctx)
+{
+    return IvrCallDataCollection::instance().get_inbound_call_data(type, input, result);
+}
+
 uint32_t ivr_reload_server::start() {
     if (!_shutdown) {
         IVR_WARN("ivr reload thread is running!");
@@ -169,7 +178,7 @@ uint32_t ivr_reload_server::start() {
         IVR_WARN("ivr reload server not ok now!");
     }
 
-    return IVR_SUCCESS;
+    return ivr::IvrResultT::ResSuccess;
 }
 
 int32_t ivr_reload_server::_thread_fun() {

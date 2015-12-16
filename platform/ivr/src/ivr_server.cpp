@@ -32,12 +32,14 @@
 
 #include "ivr_timer.h"
 #include "ivrapi.h"
+#include "ivr_data_collection.h"
 
 
 #ifndef SCMPF_MODULE_VERSION
 #define SCMPF_MODULE_VERSION "undefined"
 #endif
 
+using ivr::IvrCallDataCollection;
 static const char* cut_path(const char* in) {
     const char* p, *ret = in;
     char delims[] = "/\\";
@@ -185,6 +187,11 @@ void* calldata_to_file_thread_func(void* arg) {
 void* calc_cpu_occupy_thread_func(void* arg) {
     CpuManager* cpu_manager = CpuManager::get_instance();
     cpu_manager->calculate_cpu_occupy_block_func();
+    return NULL;
+}
+
+void* calldata_collection_thread_func(void* arg) {
+    IvrCallDataCollection::instance().calldata_to_file_block_func();
     return NULL;
 }
 
@@ -370,6 +377,16 @@ int32_t main(int32_t argc, char* argv[]) {
     //启动运行时信息输出线程
     if (pthread_create(&thread_h, NULL, disp_runinfo_thread_func, NULL) != 0) {
         IVR_FATAL("create display runinfo thread failure");
+        return FAILURE;
+    }
+
+    //初始化数据缓存， 启动运行时呼叫数据缓存线程
+    if (IvrCallDataCollection::instance().initialize(DATA_CACHE_FILE) != 0) {
+        IVR_FATAL("init ivr call data collection failed");
+        return FAILURE;
+    }
+    if (pthread_create(&thread_h, NULL, calldata_collection_thread_func, NULL) != 0) {
+        IVR_FATAL("create ivr call data thread failed");
         return FAILURE;
     }
 

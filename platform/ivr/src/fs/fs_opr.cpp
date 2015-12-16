@@ -20,6 +20,9 @@
 #include "tools.h"
 #include "ivr_instance_manager.h"
 #include "ims/ims_mgr.h"
+#include "ivr_data_collection.h"
+
+using ivr::IvrCallDataCollection;
 
 #define IMSDATA_EQUAL IMS_SESSION_TAG"="
 
@@ -349,31 +352,14 @@ int32_t fs_opr_t::get_event(fs_event_t& event, uint32_t timeout) {
             //1）没有sessionid的振铃视为呼入，同时标记
             //2）有sessionid的振铃视为外呼后的振铃
             //3）其它事件根据uuid查询
-            else if (0 == strcasecmp(event.name, "CHANNEL_PROGRESS_MEDIA") ||
-                     0 == strcasecmp(event.name, "CHANNEL_ORIGINATE") ||
-                     0 == strcasecmp(event.name, "CHANNEL_PROGRESS")) {
-                if (0 != event.sessionid &&
-                        IvrInstanceManager::get_instance()->search_ivr_instance(event.sessionid)) {
-                    IvrInstanceManager::get_instance()->add_uuid(event.sessionid, tmp_uuid);
-                    IVR_DEBUG("ADD UUID SUCC: UUID= %s", tmp_uuid);
-                } else {
-                    if (!check_ivr_ip(getIP.c_str())) {
-                        continue;
-                    }
-                }
-            } else if (!IvrInstanceManager::get_instance()->check_uuid(tmp_uuid, event.sessionid)) {
-                IVR_DEBUG("CHECK UUID FAIL: UUID= %s", tmp_uuid);
-                continue;
-            }
-
+            else {
             //封装事件
-            if (strcasecmp(event.name, "BACKGROUND_JOB") != 0) {
                 get_head_val("Unique-ID", event.event_data.normal.uuid, LEN_64);
                 get_head_val("Caller-Caller-ID-Number", event.event_data.normal.caller_no, LEN_64);
                 get_head_val("Caller-Destination-Number", event.event_data.normal.called_no, LEN_64);
                 get_head_val("Channel-Name", event.event_data.normal.channel_name, LEN_64);
                 std::string deviceno;
-
+                
                 if (ivr_tools_t::chlname2no(event.event_data.normal.channel_name, deviceno)) {
                     strncpy(event.event_data.normal.deviceno, deviceno.c_str(), LEN_64);
                 } else {
@@ -471,8 +457,24 @@ int32_t fs_opr_t::get_event(fs_event_t& event, uint32_t timeout) {
                     }
 
                 }
+                IvrCallDataCollection::instance().process_event(event);
+                if (0 == strcasecmp(event.name, "CHANNEL_PROGRESS_MEDIA") ||
+                    0 == strcasecmp(event.name, "CHANNEL_ORIGINATE") ||
+                    0 == strcasecmp(event.name, "CHANNEL_PROGRESS")) {
+                   if (0 != event.sessionid &&
+                       IvrInstanceManager::get_instance()->search_ivr_instance(event.sessionid)) {
+                       IvrInstanceManager::get_instance()->add_uuid(event.sessionid, tmp_uuid);
+                       IVR_DEBUG("ADD UUID SUCC: UUID= %s", tmp_uuid);
+                   } else {
+                       if (!check_ivr_ip(getIP.c_str())) {
+                           continue;
+                       }
+                   }
+                } else if (!IvrInstanceManager::get_instance()->check_uuid(tmp_uuid, event.sessionid)) {
+                    IVR_DEBUG("CHECK UUID FAIL: UUID= %s", tmp_uuid);
+                    continue;
+                }
             }
-
 
             std::ostringstream ostm;
             ostm << std::endl;

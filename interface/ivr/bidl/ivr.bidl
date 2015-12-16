@@ -35,6 +35,7 @@ namespace ivr {
     {
         IvrResultT ReloadConfig([in] ReloadFlagT type);
         IvrResultT StartFlow([in] string flowname, [in] string flowvars);
-        IvrResultT Heartbeat([out] string ivrinfo); 
+        IvrResultT Heartbeat([out] string ivrinfo);
+        IvrResultT GetCallInfo([in] int32 type, [in] string input, [out] string result); 
     }
 }

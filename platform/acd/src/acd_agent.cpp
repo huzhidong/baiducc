@@ -92,6 +92,7 @@ void acd_agent::Reset() {
     m_answerTime = 0;
     m_origCaller.clear();
     m_origCallee.clear();
+    _m_cur_skill.clear();
 }
 
 acd_agent::acd_agent() :
@@ -161,11 +162,12 @@ void acd_agent::GetAgentDetail(acd::AgentInfoT& agentInfo) {
     agentInfo.agentIP         = m_agentIP;
 }
 
-void acd_agent::lock(const ims::RouteEventT& event, time_t waitbegin) {
+void acd_agent::lock(const ims::RouteEventT& event, const string& skill, time_t waitbegin) {
     SingleRWLocker s(&m_RWLock, true);
 
     m_requestId = event.requstid;
     m_validTime = event.validtime;
+    _m_cur_skill = skill;
     SetStatus(acd::AgentStatusT::AsLockState, acd::CallEventReasonT::CerSuccess);
 
     if (m_callinfo.isValid()) {
@@ -173,7 +175,7 @@ void acd_agent::lock(const ims::RouteEventT& event, time_t waitbegin) {
         m_callinfo.reset();
     }
 
-    m_callinfo.Initial(event.sessionid, event.callid, m_agentId, m_agentDn, m_skill, event.callerDn,
+    m_callinfo.Initial(event.sessionid, event.callid, m_agentId, m_agentDn, _m_cur_skill, event.callerDn,
                        m_agentDn, waitbegin, time(NULL));
     m_callinfo.SetRoutecall();
 }
@@ -184,7 +186,7 @@ bool acd_agent::unlock(const ims::RouteEventT& event) {
     if (m_requestId != event.requstid) {
         return false;
     }
-
+    _m_cur_skill.clear();
     if (m_agentStatus == acd::AgentStatusT::AsLockState) {
         if (m_statusChangetype == acd::StatusChangeT::ScBusy) {
             SetStatus(acd::AgentStatusT::AsBusyState, acd::CallEventReasonT::CerIdleUnlock);
@@ -203,7 +205,7 @@ bool acd_agent::unlock(const ims::RouteEventT& event) {
 
 bool acd_agent::unlockTimeout() {
     SingleRWLocker s(&m_RWLock, true);
-
+    _m_cur_skill.clear();
     if (m_agentStatus == acd::AgentStatusT::AsLockState
             && m_validTime <= time(NULL) - m_currStatusTime) {
         if (m_statusChangetype == acd::StatusChangeT::ScBusy) {
@@ -324,8 +326,17 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
             }
 
             m_callinfo.SetAniDnis(event.originalAni, event.originalDnis);
-            m_callinfo.SetAckEnd(m_currStatusTime);
-            m_callinfo.SetCallEnd(m_currStatusTime);
+            if (lastAgentStatus == acd::AgentStatusT::AsConnectingState) {
+                m_callinfo.SetConnectEnd(m_currStatusTime);
+                m_callinfo.SetCallEnd(m_currStatusTime);
+            }
+            else if (lastAgentStatus == acd::AgentStatusT::AsConsultConnectingState) {
+                m_callinfo.SetCallEnd(m_currStatusTime);
+            }
+            else {
+                m_callinfo.SetAckEnd(m_currStatusTime);
+                m_callinfo.SetCallEnd(m_currStatusTime);
+            }
 
             if (m_callinfo.isValid()) { // 如果话单没有起始信息，则不必要写
                 m_callinfo.WriteCallLog();
@@ -394,7 +405,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
                 m_callinfo.reset();
             }
 
-            m_callinfo.Initial(event.sessionid, event.callid, m_agentId, m_agentDn, m_skill, event.originalAni,
+            m_callinfo.Initial(event.sessionid, event.callid, m_agentId, m_agentDn, _m_cur_skill, event.originalAni,
                                event.originalDnis, 0, 0);
         }
 
@@ -416,7 +427,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
             m_callinfo.reset();
         }
 
-        m_callinfo.Initial(event.sessionid, event.callid, m_agentId, m_agentDn, m_skill, event.originalAni,
+        m_callinfo.Initial(event.sessionid, event.callid, m_agentId, m_agentDn, _m_cur_skill, event.originalAni,
                            event.originalDnis, 0, 0);
         m_callinfo.SetAckBegin(m_currStatusTime);
         m_callinfo.SetCallDirect(CallDirectT::OUTBOUND);
@@ -437,6 +448,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
         } else {
             m_callinfo.SetCallType(event.otherAttr);
             m_agentStatus = acd::AgentStatusT::AsConnectingState;
+            m_callinfo.SetConnectBegin(m_currStatusTime);
         }
 
         break;
@@ -446,7 +458,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
         if (event.eventType == ims::CallEventTypeT::SG_ThisPartyAnswered_InternalCall ||
                 event.eventType == ims::CallEventTypeT::SG_ThisPartyAnswered_NormalCall) {
             Record();
-            m_callinfo.SetAckEnd(m_currStatusTime);
+            m_callinfo.SetConnectEnd(m_currStatusTime);
             m_callinfo.SetCallBegin(m_currStatusTime);
             m_callinfo.SetRecordFilename(m_recordFilename);
             m_answerTime = m_currStatusTime;
@@ -455,7 +467,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
         } else if (event.eventType == ims::CallEventTypeT::SG_OtherPartyAnswered_InternalCall ||
                    event.eventType == ims::CallEventTypeT::SG_OtherPartyAnswered_NormalCall) {
             Record();
-            m_callinfo.SetAckEnd(m_currStatusTime);
+            m_callinfo.SetConnectEnd(m_currStatusTime);
             m_callinfo.SetCallBegin(m_currStatusTime);
             m_callinfo.SetRecordFilename(m_recordFilename);
             m_answerTime = m_currStatusTime;
@@ -480,6 +492,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
 
     case ims::CallStateT::SG_HalfConnectedState:
         m_agentStatus = acd::AgentStatusT::AsHalfConnectedState;
+        m_callinfo.SetAckEnd(m_currStatusTime);
         break;
 
     case ims::CallStateT::SG_SuspendedState:
@@ -490,7 +503,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
         if (event.eventType == ims::CallEventTypeT::SG_ThisPartyConferenced_MonitorCall) {
             if (acd::AgentStatusT::AsHalfConnectedState == lastAgentStatus) {
                 Record();
-                m_callinfo.SetAckEnd(m_currStatusTime);
+                m_callinfo.SetConnectEnd(m_currStatusTime);
                 m_callinfo.SetCallBegin(m_currStatusTime);
                 m_callinfo.SetCallType(event.otherAttr);
                 m_callinfo.SetRecordFilename(m_recordFilename);
@@ -504,7 +517,7 @@ void acd_agent::ProcessIMSEvent(const ims::CallEventT& event) {
         } else if (event.eventType == ims::CallEventTypeT::SG_ThisPartyConferenced_IntrudeCall) {
             if (acd::AgentStatusT::AsHalfConnectedState == lastAgentStatus) {
                 Record();
-                m_callinfo.SetAckEnd(m_currStatusTime);
+                m_callinfo.SetConnectEnd(m_currStatusTime);
                 m_callinfo.SetCallBegin(m_currStatusTime);
                 m_callinfo.SetCallType(event.otherAttr);
                 m_callinfo.SetRecordFilename(m_recordFilename);

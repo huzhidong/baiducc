@@ -59,8 +59,28 @@ public:
     bool isValid();
 };
 
-class callinfo {
-private:
+struct calldata {
+public:
+    calldata() : m_sessionId(0), m_callId(""), m_agentId(""), m_agentDn(""), m_caller(""),
+    m_callee(""), m_waitbegin(0), m_waitend(0), m_ackbegin(0), m_ackend(0), 
+    _m_connectbegin(0), _m_connectend(0), m_callbegin(0), m_callend(0),
+    m_callType(ims::PartyAttributeT::P_Unknown), m_callDirect(CallDirectT::UNKNOWN),
+    m_releaseCause(ReleaseCauseT::UNKNOWN),
+    m_recordFilename(""), m_routecall(false){}
+
+    calldata(ims::SessionIdT sessionId, ims::CallIdT callId, string agentId, string agentDn,
+    string skill, string caller, string callee, time_t waitbegin, time_t waitend, time_t ackbegin,
+    time_t ackend, time_t connectbegin, time_t connectend, time_t callbegin,
+    time_t callend, ims::PartyAttributeT callType, CallDirectT callDirect, 
+    ReleaseCauseT releaseCause, string recordFilename, bool routecall)
+    : m_sessionId(sessionId), m_callId(callId), m_agentId(agentId), m_agentDn(agentDn), 
+    m_skill(skill), m_caller(caller),
+    m_callee(callee), m_waitbegin(waitbegin), m_waitend(waitend), m_ackbegin(ackbegin), m_ackend(ackend), 
+    _m_connectbegin(connectbegin), _m_connectend(connectend), m_callbegin(callbegin), m_callend(callend),
+    m_callType(callType), m_callDirect(callDirect),
+    m_releaseCause(releaseCause), m_recordFilename(recordFilename), m_routecall(routecall){}
+
+public:
     ims::SessionIdT m_sessionId;
     ims::CallIdT m_callId;
     string m_agentId;
@@ -73,6 +93,8 @@ private:
     time_t m_waitend;
     time_t m_ackbegin;
     time_t m_ackend;
+    time_t _m_connectbegin;//other altering begin
+    time_t _m_connectend;//other alerting end
     time_t m_callbegin;
     time_t m_callend;
 
@@ -82,7 +104,11 @@ private:
     string m_recordFilename;
 
     bool m_routecall;
+};
 
+typedef bgcc::SharedPtr<calldata> calldata_ptr;
+
+class callinfo : private calldata{
 public:
     callinfo();
     ~callinfo();
@@ -92,6 +118,8 @@ public:
     void SetAniDnis(const string& caller, const string& callee);
     void SetAckBegin(time_t t);
     void SetAckEnd(time_t t);
+    void SetConnectBegin(time_t t);
+    void SetConnectEnd(time_t t);
     void SetCallBegin(time_t t);
     void SetCallEnd(time_t t);
     void SetCallType(const ims::PartyAttributeT& callType);
@@ -103,4 +131,5 @@ public:
     bool isValid();
     void reset();
     void WriteCallLog();
+    void AddDataToCollection();
 };

@@ -561,5 +561,16 @@ namespace acd
         // @return  接口调用结果
         //
         AcdResultT ResetConfig(string password);
+
+		    // 获取呼叫数据
+		    // @param handle            [in] : 连接句柄
+		    // @param agentId           [in] : 坐席工号
+		    // @param type              [in] : 数据类型 0；按平台获取， 1：按技能组获取  2:获取所有
+	      // @param input             [in] : 输入，按平台获取，为保留字段，按技能组获取，为对应的技能组
+		    // @param result            [out] : 返回结果
+		    //
+		    // @return  接口调用结果
+		    //
+		    AcdResultT GetCallInfo(int64 handle, string agentId, int32 type, string input, [out] string result);
     }
 }

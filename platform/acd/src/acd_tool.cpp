@@ -16,6 +16,7 @@
 
 
 #include "acd_tool.h"
+using acd::AcdCallDataCollection;
 
 IDCreater::IDCreater() : m_ID(0) {
 }
@@ -49,6 +50,7 @@ acd_skill_manager acd_tool::m_skill_manager;
 acd_backup* acd_tool::p_m_acd_backup = NULL;
 acd_ims* acd_tool::p_m_acd_ims = NULL;
 acd_main_server acd_tool::m_main_server;
+AcdCallDataCollection acd_tool::_acd_calldata;
 
 void acd_tool::init_log() {
     m_logger.Initialize(m_config.m_log_count, m_config.m_log_filecount, LOG_DIR, LOG_FILE, ACD_VERSION,
@@ -109,6 +111,19 @@ void acd_tool::un_init_connect() {
     p_m_acd_backup = NULL;
 }
 
+void acd_tool::init_collection() 
+{
+    _acd_calldata.initialize(DATA_CACHE_FILE);
+    cout << "data collection init" << endl;
+    _acd_calldata.Start();
+}
+
+void acd_tool::un_init_collection() 
+{
+    _acd_calldata.unInitialize();
+    _acd_calldata.Stop();
+}
+
 void acd_tool::init() {
     if (m_config.read_config()) {
         cout << "acd init, read config success!" << endl;
@@ -116,14 +131,15 @@ void acd_tool::init() {
         cout << "acd init, read config error! acd exit!" << endl;
         exit(0);
     }
-
     init_log();
     init_manager();
+    init_collection();
     init_connect();
 }
 
 void acd_tool::un_init() {
     un_init_connect();
+    un_init_collection();
     un_init_manager();
     un_init_log();
 }

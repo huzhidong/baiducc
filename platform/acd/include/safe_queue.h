@@ -32,6 +32,10 @@ private:
 
     bgcc::Semaphore mFullSemaphore;
     bgcc::Semaphore mEmptySemaphore;
+
+    pthread_mutex_t     _mutex;
+    pthread_cond_t      _cond;
+    uint32_t            _waitings;
 public:
     SafeQueue();
     ~SafeQueue();
@@ -42,17 +46,27 @@ public:
     void BlockPop();
     void BlockPop(T& value);
     void HarfBlockPop(T& value);
+    bool UnBlockPop(T& value, int32_t timeout);
     void Push(const T& value);
     void BlockPush(const T& value);
     void HarfBlockPush(const T& value);
 };
 
 template<class T>
-SafeQueue<T>::SafeQueue() : mFullSemaphore(0), mEmptySemaphore(MAX_QUEUE_COUNT) {
+SafeQueue<T>::SafeQueue() 
+    : mFullSemaphore(0)
+    , mEmptySemaphore(MAX_QUEUE_COUNT)
+    , _waitings(0)
+{
+    pthread_mutex_init(&this->_mutex, NULL);
+    pthread_cond_init(&this->_cond, NULL);
 }
 
 template<class T>
-SafeQueue<T>::~SafeQueue() {
+SafeQueue<T>::~SafeQueue() 
+{
+    pthread_mutex_destroy(&_mutex);
+    pthread_cond_destroy(&_cond);
 }
 
 template<class T>
@@ -118,6 +132,39 @@ void SafeQueue<T>::HarfBlockPop(T& value) {
 }
 
 template<class T>
+bool SafeQueue<T>::UnBlockPop(T& value, int32_t timeout) {
+    pthread_mutex_lock(&_mutex);
+    mLocker.lock();
+    ++_waitings;
+
+        if (mQueue.empty()) {
+            if (timeout > 0) {
+                struct timespec abstime;
+                clock_gettime(CLOCK_REALTIME, &abstime);
+                abstime.tv_sec += timeout / 1000;
+                abstime.tv_nsec += (timeout % 1000) * 1000000;
+                mLocker.unlock();
+                pthread_cond_timedwait(&_cond, &_mutex, &abstime);
+                mLocker.lock();
+            }
+        }
+
+        if (mQueue.empty()) {
+            --_waitings;
+            pthread_mutex_unlock(&_mutex);
+            mLocker.unlock();
+            return false;
+        }
+
+    value = mQueue.front();
+    mQueue.pop();
+    --_waitings;
+    mLocker.unlock();
+    pthread_mutex_unlock(&_mutex);
+    return true;
+}
+
+template<class T>
 void SafeQueue<T>::Push(const T& value) {
     SingleLocker s(&mLocker);
 
@@ -126,6 +173,10 @@ void SafeQueue<T>::Push(const T& value) {
     }
 
     mQueue.push(value);
+
+    if (_waitings > 0) {
+        pthread_cond_signal(&_cond);
+    }
 }
 
 template<class T>
@@ -135,6 +186,9 @@ void SafeQueue<T>::BlockPush(const T& value) {
     mQueue.push(value);
     mLocker.unlock();
     mFullSemaphore.signal();
+    if (_waitings > 0) {
+        pthread_cond_signal(&_cond);
+    }
 }
 
 template<class T>
@@ -152,5 +206,9 @@ void SafeQueue<T>::HarfBlockPush(const T& value) {
 
     if (!isFull) {
         mFullSemaphore.signal();
+    }
+
+    if (_waitings > 0) {
+        pthread_cond_signal(&_cond);
     }
 }

@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
+#include "ivr_data_collection.h"
 #include <node_requestagent.h>
 #include <ivr_timer.h>
 #include "fs_opr.h"
 #include "fs_mgr.h"
 #include <ivr_instance_manager.h>
+
+using ivr::IvrCallDataCollection;
+using ivr::IvrInboundCall;
 
 NodeRequestAgent::NodeRequestAgent(const uint32_t id, const string& name,
                                    const string& type, const string& desc, const key_map_t& keymap)
@@ -139,7 +143,15 @@ NodeBase* NodeRequestAgent::run(base_script_t* param) {
                 ims_mgr_t::get_instance()->bind_session_id(param->imssid, param->session_id);
                 param->requestId = 0; // because imssid has changed, so request id must change
                 ims_routerequest_id_t requestid = 0;
-
+                if (reqType == ims_routerequest_type_t::RR_TypeSkill) {
+                    IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::ROUTEBYSKILL, reqargs);
+                }
+                else if(reqType == ims_routerequest_type_t::RR_TypePrivate) {
+                    IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::ROUTEBYAGENTID, "");
+                }
+                else if (reqType == ims_routerequest_type_t::RR_TypePrivateList) {
+                    IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::ROUTEBYAGENTLIST, "");
+                }
                 if (IVR_SUCCESS == ims_mgr_t::get_instance()->route_request(param->imsno, param->imssid, requestid,
                         ims::ServiceTypeT::ServiceACD, timeout, valid_time, reqType,
                         reqargs, 0, caller_uri, callee_uri, buffer)) {
@@ -148,6 +160,7 @@ NodeBase* NodeRequestAgent::run(base_script_t* param) {
                     param->requestId = requestid;
                     exit = EXIT_SUCC;
                 } else {
+                    IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::INFLOW, "");
                     IVR_WARN("route request 2 failed");
                 }
             } else {
@@ -158,6 +171,15 @@ NodeBase* NodeRequestAgent::run(base_script_t* param) {
             break;
         } else {
             ims_routerequest_id_t requestid = 0;
+            if (reqType == ims_routerequest_type_t::RR_TypeSkill) {
+                IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::ROUTEBYSKILL, reqargs);
+            }
+            else if(reqType == ims_routerequest_type_t::RR_TypePrivate) {
+                IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::ROUTEBYAGENTID, "");
+            }
+            else if (reqType == ims_routerequest_type_t::RR_TypePrivateList) {
+                IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::ROUTEBYAGENTLIST, "");
+            }
             int32_t ret = ims_mgr_t::get_instance()->route_request(param->imsno, param->imssid, requestid,
                           ims::ServiceTypeT::ServiceACD, timeout, valid_time, reqType,
                           reqargs, 0, caller_uri, callee_uri, buffer);
@@ -172,17 +194,20 @@ NodeBase* NodeRequestAgent::run(base_script_t* param) {
 
             case IVR_FAIL_IMS_ROUTEREQUEST_REPEATED:
                 // don't try again
+                IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::INFLOW, "");
                 -- retryTimes;
                 break;
 
             case IVR_FAIL_IMS_REQIDINVALIDATE:
             case IVR_FAIL_IMS_SESSIONINVALIDATE:
+                IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::INFLOW, "");
                 // ims may restarted, so must retry again
                 param->imssid = 0;
                 param->imsno = (uint32_t) - 1;
                 param->requestId = 0;
 
             default:
+                IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::INFLOW, "");
                 // don't try again
                 -- retryTimes;
                 break;

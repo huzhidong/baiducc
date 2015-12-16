@@ -29,6 +29,8 @@ public:
     ivr::IvrResultT StartFlow(const std::string& flowname, const std::string& flowvars,
                               const str2str_map& ctx);
     ivr::IvrResultT Heartbeat(std::string& ivrinfo, const str2str_map& ctx);
+    ivr::IvrResultT GetCallInfo(int32_t type, const std::string& input, std::string& result,
+                                        const str2str_map& ctx);
 };
 
 // reload config server, create a bgcc server to wait reload command

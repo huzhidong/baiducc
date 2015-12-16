@@ -38,6 +38,7 @@ private:
     time_t m_validTime;
     time_t m_heartbeatTime;                        // 心跳时间
     string m_recordFilename;                         // 录音生成的语音文件名
+    string _m_cur_skill;                                      //当前呼叫对应的skill
 
     time_t m_loginTime;                              // 登陆时间
     acd::AgentStatusT m_agentStatus;
@@ -75,7 +76,7 @@ public:
     ims::SessionIdT GetSessionId();
     string GetRecordFileName();
     void GetAgentDetail(acd::AgentInfoT& agentInfo);
-    void lock(const ims::RouteEventT& event, time_t waitbegin = time(NULL));
+    void lock(const ims::RouteEventT& event, const string& skill, time_t waitbegin = time(NULL));
     bool unlock(const ims::RouteEventT& event);
     bool unlockTimeout();
     bool isCalling();

@@ -17,6 +17,7 @@
 
 #include "acd_info.h"
 #include "acd_tool.h"
+#include "acd_data_collection.h"
 
 CallDirectT::CallDirectT(int32_t value) : m_value(value) {
 }
@@ -54,12 +55,7 @@ bool ReleaseCauseT::isValid() {
     return m_value != UNKNOWN;
 }
 
-callinfo::callinfo() : m_sessionId(0), m_callId(""), m_agentId(""), m_agentDn(""), m_caller(""),
-    m_callee(""), m_waitbegin(0), m_waitend(0),
-    m_ackbegin(0), m_ackend(0), m_callbegin(0), m_callend(0),
-    m_callType(ims::PartyAttributeT::P_Unknown), m_callDirect(CallDirectT::UNKNOWN),
-    m_releaseCause(ReleaseCauseT::UNKNOWN),
-    m_recordFilename(""), m_routecall(false) {
+callinfo::callinfo() {
 }
 
 callinfo::~callinfo() {
@@ -94,7 +90,20 @@ void callinfo::SetAckEnd(time_t t) {
     }
 }
 
+void callinfo::SetConnectBegin(time_t t) {
+    _m_connectbegin = t;
+}
+
+void callinfo::SetConnectEnd(time_t t) {
+    if (0 != _m_connectbegin) {
+        _m_connectend = t;
+    }
+}
+
 void callinfo::SetCallBegin(time_t t) {
+    if (m_ackend == 0) {
+        m_ackend = t;
+    }
     m_callbegin = t;
     m_callend = t;
 }
@@ -145,6 +154,8 @@ void callinfo::reset() {
     m_waitend = 0;
     m_ackbegin = 0;
     m_ackend = 0;
+    _m_connectbegin = 0;
+    _m_connectend = 0;
     m_callbegin = 0;
     m_callend = 0;
 
@@ -156,7 +167,7 @@ void callinfo::reset() {
     m_routecall = false;
 }
 
-void callinfo::WriteCallLog() {
+/*void callinfo::WriteCallLog() {
     ostringstream strbuf;
     strbuf << '1'
            << ',' << m_sessionId
@@ -177,4 +188,54 @@ void callinfo::WriteCallLog() {
            << ',' << m_releaseCause.get_value()
            << ',' << m_recordFilename;
     acd_tool::m_calllogger.WriteLog(strbuf.str().c_str());
+}*/
+
+void callinfo::WriteCallLog() {
+    ostringstream strbuf;
+    strbuf << '1'
+           << ',' << m_sessionId
+           << ',' << m_callId
+           << ',' << m_agentId
+           << ',' << m_agentDn
+           << ',' << m_skill
+           << ',' << m_caller
+           << ',' << m_callee
+           << ',' << static_cast<int64_t>(m_waitbegin)
+           << ',' << static_cast<int64_t>(m_waitend)
+           << ',' << static_cast<int64_t>(m_ackbegin)
+           << ',' << static_cast<int64_t>(m_ackend)
+           << ',' << static_cast<int64_t>(_m_connectbegin)
+           << ',' << static_cast<int64_t>(_m_connectend)
+           << ',' << static_cast<int64_t>(m_callbegin)
+           << ',' << static_cast<int64_t>(m_callend)
+           << ',' << m_callType.get_value()
+           << ',' << m_callDirect.get_value()
+           << ',' << m_releaseCause.get_value()
+           << ',' << m_recordFilename;
+    acd_tool::m_calllogger.WriteLog(strbuf.str().c_str());
+    AddDataToCollection();
 }
+
+void callinfo::AddDataToCollection()
+{
+    calldata_ptr p(new (std::nothrow) calldata(m_sessionId, m_callId, m_agentId,
+        m_agentDn, m_skill, m_caller, m_callee, m_waitbegin, m_waitend, m_ackbegin, m_ackend,
+        _m_connectbegin, _m_connectend, m_callbegin, m_callend, m_callType, m_callDirect,
+        m_releaseCause, m_recordFilename, m_routecall));
+    /*struct calldata *p = new (std::nothrow) calldata(m_sessionId, m_callId, m_agentId,
+        m_agentDn, m_skill, m_caller, m_callee, m_waitbegin, m_waitend, m_ackbegin, m_ackend,
+        _m_connectbegin, _m_connectend, m_callbegin, m_callend, m_callType, m_callDirect,
+        m_releaseCause, m_recordFilename, m_routecall);*/
+    if (p.get() ==  NULL) {
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+            "new failed: agentId(%s),  sessionid(%d), callid(%s), skill(%s)", 
+            m_agentId.c_str(), m_sessionId, m_callId.c_str(), m_skill.c_str());
+        return;
+    }
+    acd_tool::_acd_calldata.push_call_data(p);
+    acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
+        "push calldata to cached: agentId(%s),  sessionid(%lu), callid(%s), skill(%s)in queue", 
+        m_agentId.c_str(), m_sessionId, m_callId.c_str(), m_skill.c_str());
+    return;
+}
+

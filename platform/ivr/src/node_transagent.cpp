@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+#include "ivr_data_collection.h"
 #include <node_transagent.h>
 #include <ivr_instance_manager.h>
 
-
+using ivr::IvrCallDataCollection;
+using ivr::IvrInboundCall;
 NodeTransAgent::NodeTransAgent(const uint32_t id, const string& name,
                                const string& type, const string& desc, const key_map_t& keymap)
     : NodeResource(id, name, type, desc, keymap) {
@@ -48,6 +50,7 @@ NodeBase* NodeTransAgent::run(base_script_t* param) {
             // mark stop to receive fs event and send fs cmd
             IvrInstanceManager::get_instance()->mark_transagent(param->session_id,
                     strcasecmp(noevent.c_str(), "false") != 0);
+            IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::TRANSAGENT, "");
         } else {
             IVR_WARN("trans agent failed!");
         }

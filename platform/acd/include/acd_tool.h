@@ -27,7 +27,9 @@
 #include "acd_backup.h"
 #include "acd_ims.h"
 #include "acd_server.h"
+#include "acd_data_collection.h"
 
+using acd::AcdCallDataCollection;
 class IDCreater {
 private:
     int64_t m_ID;
@@ -58,6 +60,7 @@ public:
     static acd_backup* p_m_acd_backup;
     static acd_ims* p_m_acd_ims;
     static acd_main_server m_main_server;
+    static AcdCallDataCollection _acd_calldata;
 
 private:
     static void init_log();
@@ -66,6 +69,8 @@ private:
     static void un_init_manager();
     static void init_connect();
     static void un_init_connect();
+    static void init_collection();
+    static void un_init_collection();
 
 public:
     static void init();

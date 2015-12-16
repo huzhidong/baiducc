@@ -25,12 +25,15 @@
 #include "flow_manager.h"
 #include "fs_mgr.h"
 #include "fs_opr.h"
-#include "lock.h"
+#include "ivr_data_collection.h"
 #include <ims/ims_mgr.h>
 
 #if IVR_ENABLE_DEBUGER
 #include "ivrdebuger.h"
 #endif
+
+using ivr::IvrCallDataCollection;
+using ivr::IvrInboundCall;
 
 extern inbound_conf_t  g_inbound_conf;
 //extern map<string, flow_t*> g_flow_name_info_map;
@@ -115,6 +118,9 @@ uint32_t InboundChanThread::execute(void* taskparam) {
 
     if (!check_capability()) {
         ret = 1;
+        // add to data collection
+        IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+            , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
         goto END;
     }
 
@@ -124,6 +130,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
 
         if (!lock.locked()) {
             IVR_WARN("failed lock!");
+            IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+                , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
             goto CHAN_END;
         }
 
@@ -131,6 +139,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
             if (!g_inbound_conf.has_default) {
                 IVR_WARN("没有找到可以匹配的流程(dnis=%s),且默认流程未配置或未正确加载", dnis.c_str());
                 ret = 1;
+                IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+                    , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
                 goto CHAN_END;
             } else {
                 IVR_TRACE("没有找到可以匹配的流程(dnis=%s),启动默认流程", dnis.c_str());
@@ -138,6 +148,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
 
                 if (SUCCESS != FlowManager::attach_flow(g_inbound_conf.default_script.flow, &script.flow)) {
                     ret = 1;
+                    IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+                        , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
                     goto CHAN_END;
                 }
             }
@@ -147,6 +159,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
 
             if (SUCCESS != FlowManager::attach_flow(g_inbound_conf.dnis_script_map[dnis].flow, &script.flow)) {
                 ret = 1;
+                IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+                    , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
                 goto CHAN_END;
             }
         }
@@ -176,6 +190,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     if (IVR_SUCCESS != mgr->create_ivr_instance(script.type, script.fid, &ivr_s_id, *resource,
             script.callid.c_str())) {
         IVR_WARN("创建实例失败(dnis=%s)", script.dnis.c_str());
+        IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+            , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
         goto CHAN_END;
     }
 
@@ -183,6 +199,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     if (IVR_SUCCESS != mgr->add_uuid(ivr_s_id, script.callid)) {
         IVR_WARN("创建实例失败(dnis=%s)", script.dnis.c_str());
         mgr->destroy_ivr_instance(ivr_s_id);
+        IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+            , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
         goto CHAN_END;
     }
 
@@ -192,6 +210,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
             IVR_WARN("添加uuid失败(dnis=%s)", script.dnis.c_str());
             mgr->destroy_ivr_instance(ivr_s_id);
             fs_mgr_t::instance()->free_opr(&opr);
+            IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+                , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
             goto CHAN_END;
         }
 
@@ -199,6 +219,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     } else {
         IVR_WARN("注册实例失败(dnis=%s)", script.dnis.c_str());
         mgr->destroy_ivr_instance(ivr_s_id);
+        IvrCallDataCollection::instance().new_inbound_call(((inbound_script_t*)_param)->ani
+            , ((inbound_script_t*)_param)->dnis, ((inbound_script_t*)_param)->callid);
         goto CHAN_END;
     }
 
@@ -234,6 +256,9 @@ uint32_t InboundChanThread::execute(void* taskparam) {
     ost << "================";
     IVR_DEBUG("%s", ost.str().c_str());
 
+    // add to data collection
+   IvrCallDataCollection::instance().new_inbound_call(script.ani, script.dnis, script.session_id, script.callid); 
+
 #if IVR_ENABLE_DEBUGER
     IvrDebuger::get_instance()->report(this, "startup", script, node);
 #endif
@@ -258,6 +283,8 @@ uint32_t InboundChanThread::execute(void* taskparam) {
         calldata_manager->push_calldata(script.bill_info().c_str());
     }
 
+    //set state
+    IvrCallDataCollection::instance().set_state(script.session_id, IvrInboundCall::EXITFLOW, "");
     ivr_tools_t::destroy_vars(script.name_var_map);
     mgr->destroy_ivr_instance(ivr_s_id);
     ims_mgr_t::get_instance()->unbind_session_id(ivr_s_id);

@@ -8,11 +8,13 @@ INC_PATH += -I../../interface/output/bgcc/include/libs/
 INC_PATH += -I../../interface/output/acd/include/
 INC_PATH += -I../../interface/output/ims/include/
 INC_PATH += -I$(DEP_ROOT)/mysql/output/include/
+INC_PATH += -I$(DEP_ROOT)/json-c/output/include
 
 LIB_PATH  = -L../../interface/output/bgcc/lib/
 LIB_PATH += -L../../interface/output/acd/lib/linux/
 LIB_PATH += -L../../interface/output/ims/lib/linux/
 LIB_PATH += -L$(DEP_ROOT)/mysql/output/lib/
+LIB_PATH += -L$(DEP_ROOT)/json-c/output/lib
 
 VERSION = "1-1-2-14"
 TAG = ${VERSION}
@@ -24,7 +26,7 @@ CXXFLAGS = -Wall -W -pipe -Wno-unused-parameter -Wreorder -Wwrite-strings -Wswit
 		         -DACD_VERSION=\"$(VERSION)\" -DCVSTAG=\"$(TAG)\" -DPROJECT_NAME=\"$(BINNAME)\"\
 #				 -Dprotected=public -Dprivate=public
 
-LDFLAGS =  -lacd -lims -lbgcc -lmysqlclient_r -lz -luuid -lpthread -lssl -lcrypto -lm -lrt -ldl
+LDFLAGS =  -lacd -lims -lbgcc -lmysqlclient_r -lz -luuid -lpthread -lssl -lcrypto -lm -lrt -ldl -ljson -lssl -ldl -lcrypto
 
 SOURCES = $(wildcard src/*.cpp)
 OBJS = $(patsubst %.cpp,%.o,$(SOURCES))

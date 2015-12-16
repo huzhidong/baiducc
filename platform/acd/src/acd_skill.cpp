@@ -104,7 +104,7 @@ void acd_skill::Method() {
             continue;
         }
 
-        p_agent->lock(pRequest->GetEvent(), pRequest->GetWaitbeginTime());
+        p_agent->lock(pRequest->GetEvent(), m_strSkill, pRequest->GetWaitbeginTime());
 
         if (acd_tool::p_m_acd_ims->RouteRequestRespond(pRequest->GetEvent().sessionid,
                 pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonSuccess, p_agent->GetAgentDn())) {

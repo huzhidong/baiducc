@@ -16,10 +16,14 @@
 
 
 #include "ims/eventimp.h"
+#include "ivr_data_collection.h"
 #include <tools.h>
 #include <ims/ims_mgr.h>
 #include <ivr_instance_manager.h>
 #include <common.h>
+
+using ivr::IvrCallDataCollection;
+using ivr::IvrInboundCall;
 
 ims::CcResultT ImsEventImp::SendCallEvent(const ims::CallEventT& event,
         const std::map<std::string, std::string>& ctx) {
@@ -53,6 +57,7 @@ ims::CcResultT ImsEventImp::SendRouteEvent(const ims::RouteEventT& event,
             ivrevent->sessionId = ivrsid;
             ivrevent->evt_type = ivr_base_event_t::IMS_EVENT;
             ivrevent->evt_name = ivr_ims_event_t::IVR_EVT_IMS_ROUTE_RESPONSE;
+            IvrCallDataCollection::instance().process_event(ivrevent.get());
             IvrInstanceManager::get_instance()->put_ivr_event(ivrevent.release());
             IVR_TRACE("route event success!");
         } else {

@@ -489,4 +489,6 @@ extern time_t g_autorun_script_stamp;   // mark last autorun script loaded time
 //  if st < g_autorun_script_stamp, the thread need stop,
 //      because autorun script ust reloaded
 
+const char DATA_CACHE_FILE[] = "log/ivr_datacached.log";
+
 #endif

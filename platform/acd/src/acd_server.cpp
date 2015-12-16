@@ -344,3 +344,10 @@ acd::AcdResultT acd_server::ResetConfig(const string& password,
                                         const std::map<std::string, std::string>& ctx) {
     return acd_tool::m_agent_manager.ResetConfig(password);
 }
+
+acd::AcdResultT acd_server::GetCallInfo(int64_t handle, const string& agentId, 
+                                int32_t type, const string& input, string& result, 
+                                const std::map<std::string, std::string>& ctx)
+{
+    return acd_tool::_acd_calldata.get_call_data(handle, agentId, type, input, result);
+}

@@ -165,7 +165,7 @@ void acd_agent_manager::RouteRequestCancel(const ims::RouteEventT& event) {
 
 void acd_agent_manager::RouteRequestSuccess(const ims::RouteEventT& event,
         const acd_agent_ptr& p_agent) {
-    p_agent->lock(event);
+    p_agent->lock(event, "");
 
     if (acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
             ims::RouteEventReasonT::RouteReasonSuccess, p_agent->GetAgentDn())) {

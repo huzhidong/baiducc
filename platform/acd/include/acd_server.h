@@ -160,4 +160,7 @@ public:
                                       const std::map<std::string, std::string>& ctx);
     virtual acd::AcdResultT ResetConfig(const string& password,
                                         const std::map<std::string, std::string>& ctx);
+    virtual acd::AcdResultT GetCallInfo(int64_t handle, const string& agentId,
+                                        int32_t type, const string& input, string& result,
+                                        const std::map<std::string, std::string>& ctx);
 };

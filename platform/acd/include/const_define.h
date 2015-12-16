@@ -96,6 +96,7 @@ const char CONFIG_FILE[] = "acd.conf";
 const char LOG_FILE[] = "acdlog";
 const char EVNET_LOG_FILE[] = "acdeventlog";
 const char CALL_LOG_FILE[] = "acdcalllog";
+const char DATA_CACHE_FILE[] = "log/acd_datacached.log";
 
 // 日志级别
 enum Level {
