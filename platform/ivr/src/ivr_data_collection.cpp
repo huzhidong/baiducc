@@ -33,12 +33,12 @@
     }
 
 namespace ivr {
-    time_t _m_inboundbegin_time;
-    time_t _m_flowbegin_time;
-    time_t _m_answer_time;	
-    time_t _m_trans_time;
-    time_t _m_exit_flow_time;
-    time_t _m_hangup_time;
+time_t _m_inboundbegin_time;
+time_t _m_flowbegin_time;
+time_t _m_answer_time;	
+time_t _m_trans_time;
+time_t _m_exit_flow_time;
+time_t _m_hangup_time;
 int32_t IvrInboundCall::set_state(int32_t state)
 {
     time_t cur_time = time(NULL);
@@ -166,7 +166,7 @@ int32_t IvrCallDataCollection::initialize(const char* path)
             IVR_WARN("new ivr num memory failed, ivrnum(%s)", iter->first.c_str());
             return -1;
         }
-	 _ivrnum_call_data.insert(std::make_pair("default", p));
+	    _ivrnum_call_data.insert(std::make_pair("default", p));
     }
     // read cached data form file
     _cached_file = path;
