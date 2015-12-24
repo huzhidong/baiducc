@@ -4310,3 +4310,31 @@ bool AgentProxy::GetAgents(ApAgentInfoListT& agentInfoList) {
 
     return true;
 }
+
+AcdResultT AgentProxy::GetCallInfo(int64_t handle, const std::string& agentId, 
+        int32_t type, const std::string& input, std::string& result,
+        const std::map<std::string, std::string>& ctx) {
+    AcdResultT ret;
+
+    //获取客户端IP地址
+    std::string peerIP = getProxyIP(ctx);
+    BGCC_NOTICE("ap", "Transfer GetCallInfo PeerIP[%s].", peerIP.c_str());
+
+    APCONNACDSTATE state;
+    state = GetCtiService();
+
+    if (AP_CONNACD_BACKING == state || AP_CONNACD_UNKNOW == state) {
+        BGCC_WARN("ap", "Transfer GetCallInfo:NowState = %d,return fail connect to ACD.", state);
+        return AcdResultT::ArConnAcdFail;
+    }
+
+    if (!_pApClient) {
+        BGCC_WARN("ap", "Client is NULL.");
+        return AcdResultT::ArApFailed;
+    }
+
+    ret = _pApClient->GetCallInfo(handle, agentId, type, input, result);
+
+    BGCC_NOTICE("ap", "Transfer GetCallInfo End:ret = %s", ret.get_desc().c_str());
+    return ret;
+}

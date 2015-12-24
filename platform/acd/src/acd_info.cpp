@@ -167,7 +167,7 @@ void callinfo::reset() {
     m_routecall = false;
 }
 
-/*void callinfo::WriteCallLog() {
+void callinfo::WriteCallLog() {
     ostringstream strbuf;
     strbuf << '1'
            << ',' << m_sessionId
@@ -188,9 +188,10 @@ void callinfo::reset() {
            << ',' << m_releaseCause.get_value()
            << ',' << m_recordFilename;
     acd_tool::m_calllogger.WriteLog(strbuf.str().c_str());
-}*/
+    AddDataToCollection();
+}
 
-void callinfo::WriteCallLog() {
+/*void callinfo::WriteCallLog() {
     ostringstream strbuf;
     strbuf << '1'
            << ',' << m_sessionId
@@ -214,7 +215,7 @@ void callinfo::WriteCallLog() {
            << ',' << m_recordFilename;
     acd_tool::m_calllogger.WriteLog(strbuf.str().c_str());
     AddDataToCollection();
-}
+}*/
 
 void callinfo::AddDataToCollection()
 {

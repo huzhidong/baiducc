@@ -1798,6 +1798,26 @@ AcdResultT ApClient::ResetConfig(const std::string& password,
     return ret;
 }
 
+AcdResultT ApClient::GetCallInfo(int64_t handle, const std::string& agentId, 
+                            int32_t type, const std::string& input, std::string& result) {
+    AcdResultT ret;
+    if (_acdClientProxy) {
+        ret = _acdClientProxy->GetCallInfo(handle, agentId, type, input, result);
+
+        int32_t err = _acdClientProxy->get_errno();
+
+        if (err != 0) {
+            BGCC_WARN("ap", "GetCallInfo:Fail to GetCallInfo from ACD.errno = %d.", err);
+            ret = AcdResultT::ArConnAcdFail;
+        }
+    } else {
+        BGCC_WARN("ap", "ResetConfig:Proxy is NULL");
+        ret = AcdResultT::ArApFailed;
+    }
+
+    return ret;
+}
+
 AcdResultT ApClient::JumptheQueue(int64_t handle,
                                   const std::string& agentId,
                                   int64_t requestId,

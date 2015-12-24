@@ -814,5 +814,17 @@ AcdResultT ApServer::ResetConfig(const std::string& password,
     ret = agentProxy->ResetConfig(password, ctx, time_rcv);
     return ret;
 }
+
+AcdResultT ApServer::GetCallInfo(int64_t handle, const std::string& agentId, 
+                                int32_t type, const std::string& input, std::string& result, 
+                                const std::map<std::string, std::string>& ctx)
+{
+    AgentProxy* agentProxy = AgentProxy::Instance();
+    AcdResultT ret;
+
+    ret = agentProxy->GetCallInfo(handle, agentId, type, input, result, ctx);
+    return ret;
+}
+
 ApServer::~ApServer() {}
 

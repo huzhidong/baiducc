@@ -370,6 +370,9 @@ public:
                             int64_t requestId,
                             uint64_t time_rcv);
 
+    AcdResultT GetCallInfo(int64_t handle, const std::string& agentId, 
+                            int32_t type, const std::string& input, std::string& result);
+
 }; // end of class ApClient
 
 

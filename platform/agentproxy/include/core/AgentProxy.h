@@ -613,6 +613,9 @@ public:
                             const std::map<std::string, std::string>& ctx, uint64_t time_rcv);
     bool ReLoadConfig();
     bool GetAgents(ApAgentInfoListT& agentInfoList);
+    AcdResultT GetCallInfo(int64_t handle, const std::string& agentId, 
+                            int32_t type, const std::string& input, std::string& result,
+                            const std::map<std::string, std::string>& ctx);
 
 
     /*私有成员接口声明*/

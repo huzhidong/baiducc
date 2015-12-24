@@ -343,6 +343,10 @@ public:
 
     virtual AcdResultT JumptheQueue(int64_t handle, const std::string& agentId, int64_t requestId,
                                     const std::map<std::string, std::string>& ctx);
+
+    virtual acd::AcdResultT GetCallInfo(int64_t handle, const std::string& agentId,
+                                        int32_t type, const std::string& input, std::string& result,
+                                        const std::map<std::string, std::string>& ctx);
 private:
 
 
