@@ -242,7 +242,13 @@ void AcdCallDataCollection::update_data(calldata_ptr& callinfo)
         return;
     }
     uint32_t calltime = callinfo->m_callend - callinfo->m_callbegin;
+    if (callinfo->m_callend < callinfo->m_callbegin) {
+        calltime = 0;
+    }
     uint32_t alerting = callinfo->m_ackend - callinfo->m_ackbegin;
+    if (callinfo->m_ackend < callinfo->m_ackbegin) {
+        alerting = 0;
+    }
     //update cc info
     if (callinfo->m_callDirect.get_value() == CallDirectT::OUTBOUND) {
         ++_cc_call_data.outbound_call_num;

@@ -456,7 +456,7 @@ int32_t IvrCallDataCollection::process_event(ivr_base_event_t* event)
     struct IvrInboundCall *cur_call = NULL;
     BGCC_LOCK(_m_locker);
     FIND_CALL(ivrsid, cur_call);
-     cur_call->set_state(IvrInboundCall::INFLOW);    
+    cur_call->set_state(IvrInboundCall::INFLOW);    
     return 0;    
 }
 
@@ -464,11 +464,11 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
 {
     std::string uuid = event.event_data.normal.uuid;
     uint64_t sessionid = event.sessionid;
-    IVR_DEBUG("process event, name(%s), caller(%s), called(%s), sessionid(%lu), callid(%s)"
+    /*IVR_DEBUG("process event, name(%s), caller(%s), called(%s), sessionid(%lu), callid(%s)"
             , event.name
             , event.event_data.normal.caller_no
             , event.event_data.normal.called_no
-            , sessionid, uuid.c_str());
+            , sessionid, uuid.c_str());*/
     struct IvrInboundCall *cur_call = NULL;
     if (strcasecmp(event.name, "CHANNEL_ANSWER") == 0) {
         std::map<std::string, ivr_session_id_t>::iterator iter;
@@ -582,11 +582,11 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
         }
         //clear data        
     }
-    IVR_DEBUG("process event end, name(%s), caller(%s), called(%s), sessionid(%lu), callid(%s), curcalnum(%d)"
+    /*IVR_DEBUG("process event end, name(%s), caller(%s), called(%s), sessionid(%lu), callid(%s), curcalnum(%d)"
             , event.name
             , event.event_data.normal.caller_no
             , event.event_data.normal.called_no
-            , sessionid, uuid.c_str(), (int32_t)_realtime_call.size());
+            , sessionid, uuid.c_str(), (int32_t)_realtime_call.size());*/
     return 0;
 }
 
@@ -933,6 +933,16 @@ void IvrCallDataCollection::clear_invaid_call()
         }
         if (cur_time - iter->second->get_begintime() > interval) {
             IVR_NOTICE("clear one invaid call, sessionid(%lu)", iter->first);
+            std::string called = iter->second->get_called();
+            IterIvrNum iter_ivrnum = _ivrnum_call_data.find(called);
+            if (iter_ivrnum != _ivrnum_call_data.end() && iter_ivrnum->second != NULL) {
+                if (iter_ivrnum->second->cur_accept_num > 0) {
+                    --iter_ivrnum->second->cur_accept_num;
+                }
+                if (iter_ivrnum->second->cur_inbound_num) {
+                    --iter_ivrnum->second->cur_inbound_num;
+                }
+            }
             // clear first uuid_sessiond
             std::map<std::string, ivr_session_id_t>::iterator iter_uuid;
             for (iter_uuid = _first_uuid_map.begin(); iter_uuid != _first_uuid_map.end(); ++iter_uuid) {
@@ -949,6 +959,12 @@ void IvrCallDataCollection::clear_invaid_call()
             delete iter->second;
             iter->second = NULL;
             _realtime_call.erase(iter->first);
+            if (_plat_call_data.cur_accept_num > 0) { 
+                --_plat_call_data.cur_accept_num;
+            }
+            if (_plat_call_data.cur_inbound_num > 0) {
+                --_plat_call_data.cur_inbound_num;
+            }
         }        
     }
 }
