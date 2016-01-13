@@ -82,12 +82,16 @@ int32_t AcdCallDataCollection::get_data_from_file()
     bgcc2::ConfUnit& out_ans_num= section1["OUTANSNUM"];
     bgcc2::ConfUnit& out_call_time= section1["OUTCALLTIME"];
     bgcc2::ConfUnit& in_call_time= section1["INCALLTIME"];
+    bgcc2::ConfUnit& in_alert_time= section1["INALERTTIME"];
     bgcc2::ConfUnit& in_ans_num= section1["INANWNUM"];
+    bgcc2::ConfUnit& in_call_num= section1["INCALLNUM"];
     CHECK_CONF(out_call_num, bgcc::ConfUnit::UT_STRING);
     CHECK_CONF(out_ans_num, bgcc::ConfUnit::UT_STRING);
     CHECK_CONF(out_call_time, bgcc::ConfUnit::UT_STRING);
     CHECK_CONF(in_call_time, bgcc::ConfUnit::UT_STRING);
+    CHECK_CONF(in_alert_time, bgcc::ConfUnit::UT_STRING);
     CHECK_CONF(in_ans_num, bgcc::ConfUnit::UT_STRING);
+    CHECK_CONF(in_call_num, bgcc::ConfUnit::UT_STRING);
     if (!bgcc::StringUtil::str2uint32(out_call_num.to_string().c_str(), _cc_call_data.outbound_call_num)) {
         acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
             "parse outcallnum(%s) failed", out_call_num.to_string().c_str());
@@ -100,17 +104,27 @@ int32_t AcdCallDataCollection::get_data_from_file()
     }
     if (!bgcc::StringUtil::str2uint32(out_call_time.to_string().c_str(), _cc_call_data.outbound_call_time)) {
         acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
-            "parse outcallnum(%s) failed", out_ans_num.to_string().c_str());
+            "parse outcalltime(%s) failed", out_call_time.to_string().c_str());
         return -1;
     }
     if (!bgcc::StringUtil::str2uint32(in_call_time.to_string().c_str(), _cc_call_data.inbound_call_time)) {
         acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
-            "parse incalltime(%s) failed", out_call_num.to_string().c_str());
+            "parse incalltime(%s) failed", in_call_time.to_string().c_str());
+        return -1;
+    }
+    if (!bgcc::StringUtil::str2uint32(in_alert_time.to_string().c_str(), _cc_call_data.inbound_alerting_time)) {
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
+            "parse inalerttime(%s) failed", in_alert_time.to_string().c_str());
         return -1;
     }
     if (!bgcc::StringUtil::str2uint32(in_ans_num.to_string().c_str(), _cc_call_data.inbound_ans_num)) {
         acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
-            "parse inansnum(%s) failed", out_call_num.to_string().c_str());
+            "parse inansnum(%s) failed", in_ans_num.to_string().c_str());
+        return -1;
+    }
+    if (!bgcc::StringUtil::str2uint32(in_call_num.to_string().c_str(), _cc_call_data.inbound_call_num)) {
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
+            "parse incallnum(%s) failed", out_call_num.to_string().c_str());
         return -1;
     }
     acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
@@ -122,7 +136,11 @@ int32_t AcdCallDataCollection::get_data_from_file()
     acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
         "|INCALLTIME  | %d", _cc_call_data.inbound_call_time);
     acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
+        "|INALERTTIME  | %d", _cc_call_data.inbound_alerting_time);
+    acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
         "|INANSNUM  | %d", _cc_call_data.inbound_ans_num);
+    acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
+        "|INCALLNUM  | %d", _cc_call_data.inbound_call_num);
 
     //begin load skill info
     bgcc2::ConfUnit& section3 = root["SkillCallData"];
@@ -138,16 +156,17 @@ int32_t AcdCallDataCollection::get_data_from_file()
         bgcc2::ConfUnit& calltime = skill["InCallTime"];
         bgcc2::ConfUnit& alerttime = skill["InAlertTime"];
         bgcc2::ConfUnit& ansnum = skill["InAnsNum"];
+        bgcc2::ConfUnit& callnum = skill["InCallNum"];
         CHECK_CONF(skillname, bgcc::ConfUnit::UT_STRING);
         CHECK_CONF(calltime, bgcc::ConfUnit::UT_STRING);
         CHECK_CONF(alerttime, bgcc::ConfUnit::UT_STRING);
         CHECK_CONF(ansnum, bgcc::ConfUnit::UT_STRING);
         SkillCallData* p = new (std::nothrow) SkillCallData;
-	 if (p == NULL) {
+	    if (p == NULL) {
             acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
                 "new skillinfo failed");
             return -1;            
-	 }
+	    }
         if (!bgcc::StringUtil::str2uint32(calltime.to_string().c_str(), p->inbound_call_time)) {
             acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
                 "parse skill calltime(%s) failed", calltime.to_string().c_str());
@@ -156,6 +175,11 @@ int32_t AcdCallDataCollection::get_data_from_file()
         if (!bgcc::StringUtil::str2uint32(alerttime.to_string().c_str(), p->inbound_alerting_time)) {
             acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
                 "parse skill alerttime(%s) failed", alerttime.to_string().c_str());
+            return -1;
+        }
+        if (!bgcc::StringUtil::str2uint32(callnum.to_string().c_str(), p->inbound_call_num)) {
+            acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
+                "parse skill callnum(%s) failed", callnum.to_string().c_str());
             return -1;
         }
         if (!bgcc::StringUtil::str2uint32(ansnum.to_string().c_str(), p->inbound_answer_num)) {
@@ -170,6 +194,8 @@ int32_t AcdCallDataCollection::get_data_from_file()
             "        |CALLTIME | %d", p->inbound_call_time);
         acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
             "        |ALERTTIME  | %d", p->inbound_alerting_time);
+        acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
+            "        |CALLNUM | %d", p->inbound_call_num);
         acd_tool::m_logger.WriteLog(LOG_LEVEL_NOTICE, __FILE__, __LINE__, __FUNCTION__,
             "        |ANSNUM | %d", p->inbound_answer_num);
     } 
@@ -197,7 +223,10 @@ int32_t AcdCallDataCollection::put_data_to_file()
     out << "OUTANSNUM = " << _cc_call_data.outbound_ans_num << "\n";
     out << "OUTCALLTIME = " << _cc_call_data.outbound_call_time << "\n";
     out << "INCALLTIME = " << _cc_call_data.inbound_call_time << "\n";
+    out << "INALERTTIME = " << _cc_call_data.inbound_call_time << "\n";
     out << "INANWNUM = " << _cc_call_data.inbound_ans_num << "\n";
+    out << "INCALLNUM = " << _cc_call_data.inbound_call_num << "\n";
+
 
     // load skill call data
     for (iter iter = _skill_call_info.begin(); iter != _skill_call_info.end(); ++iter) {
@@ -205,6 +234,7 @@ int32_t AcdCallDataCollection::put_data_to_file()
         out << "SkillName = " << iter->first.c_str() << "\n";
         out << "InCallTime = " << iter->second->inbound_call_time << "\n";
         out << "InAlertTime = " << iter->second->inbound_alerting_time << "\n";
+        out << "InCallNum = " << iter->second->inbound_call_num << "\n";
         out << "InAnsNum = " << iter->second->inbound_answer_num << "\n";
     }
     out.close();    
@@ -258,8 +288,12 @@ void AcdCallDataCollection::update_data(calldata_ptr& callinfo)
         }
     }
     else if (callinfo->m_callDirect.get_value() == CallDirectT::INBOUND && calltime > 0) {
-        ++_cc_call_data.inbound_ans_num;
-         _cc_call_data.inbound_call_time += calltime;
+        ++_cc_call_data.inbound_call_num;
+        _cc_call_data.inbound_alerting_time += alerting;
+        if (calltime > 0) {
+            ++_cc_call_data.inbound_ans_num;
+            _cc_call_data.inbound_call_time += calltime;
+        }
     }
     //update skill info
     if (callinfo->m_callDirect.get_value() == CallDirectT::INBOUND && !callinfo->m_skill.empty()) {
@@ -276,6 +310,8 @@ void AcdCallDataCollection::update_data(calldata_ptr& callinfo)
             p->inbound_alerting_time = 0;
             p->inbound_answer_num = 0;
             p->inbound_call_time = 0;
+            p->inbound_call_num = 0;
+            ++p->inbound_call_num;
             p->inbound_alerting_time += alerting;
             if (calltime > 0) {
                 ++p->inbound_answer_num;
@@ -285,6 +321,7 @@ void AcdCallDataCollection::update_data(calldata_ptr& callinfo)
         }
         else {
             iter->second->inbound_alerting_time += alerting;
+            ++iter->second->inbound_call_num;
             if (calltime > 0) {
                 ++iter->second->inbound_answer_num;
                 iter->second->inbound_call_time += calltime;
@@ -335,7 +372,9 @@ int32_t AcdCallDataCollection::get_call_data_by_plat(string& data)
     json_object_object_add(calldata, "OutAnsNum", json_object_new_int(_cc_call_data.outbound_ans_num));
     json_object_object_add(calldata, "OutCallTime", json_object_new_int(_cc_call_data.outbound_call_time));
     json_object_object_add(calldata, "InAnsNum", json_object_new_int(_cc_call_data.inbound_ans_num));
+    json_object_object_add(calldata, "InCallNum", json_object_new_int(_cc_call_data.inbound_ans_num));
     json_object_object_add(calldata, "InCallTime", json_object_new_int(_cc_call_data.inbound_call_time));
+    json_object_object_add(calldata, "InAlertTime", json_object_new_int(_cc_call_data.inbound_alerting_time));
     json_object_object_add(root, "result", json_object_new_string("0"));
     json_object_object_add(root, "data", calldata);
     data = json_object_to_json_string(root);
@@ -380,6 +419,7 @@ int32_t AcdCallDataCollection::get_call_data_by_skill(string& data, const string
     json_object_object_add(calldata, "InCallTime", json_object_new_int(iter->second->inbound_call_time));
     json_object_object_add(calldata, "InAlertTime", json_object_new_int(iter->second->inbound_alerting_time));
     json_object_object_add(calldata, "InAnsNum", json_object_new_int(iter->second->inbound_answer_num));
+    json_object_object_add(calldata, "InCallNum", json_object_new_int(iter->second->inbound_call_num));
     json_object_object_add(root, "result", json_object_new_string("0"));
     json_object_object_add(root, "data", calldata);
     data = json_object_to_json_string(root);
@@ -424,7 +464,9 @@ int32_t AcdCallDataCollection::get_call_data_by_all(string& data)
     json_object_object_add(platdata, "OutAnsNum", json_object_new_int(_cc_call_data.outbound_ans_num));
     json_object_object_add(platdata, "OutCallTime", json_object_new_int(_cc_call_data.outbound_call_time));
     json_object_object_add(platdata, "InAnsNum", json_object_new_int(_cc_call_data.inbound_ans_num));
+    json_object_object_add(platdata, "InCallNum", json_object_new_int(_cc_call_data.inbound_call_num));
     json_object_object_add(platdata, "InCallTime", json_object_new_int(_cc_call_data.inbound_call_time));
+    json_object_object_add(platdata, "InAlertTime", json_object_new_int(_cc_call_data.inbound_alerting_time));
     json_object_object_add(calldata, "platinfo", platdata);
     json_object *skilldata = json_object_new_array();
     if (skilldata == NULL) {
@@ -447,6 +489,7 @@ int32_t AcdCallDataCollection::get_call_data_by_all(string& data)
             json_object_object_add(skillinfo, "InCallTime", json_object_new_int(iter->second->inbound_call_time));
             json_object_object_add(skillinfo, "InAlertTime", json_object_new_int(iter->second->inbound_alerting_time));
             json_object_object_add(skillinfo, "InAnsNum", json_object_new_int(iter->second->inbound_answer_num));
+            json_object_object_add(skillinfo, "InCallNum", json_object_new_int(iter->second->inbound_call_num));
             json_object_array_add(skilldata, skillinfo);
         }
     }
@@ -504,6 +547,7 @@ void AcdCallDataCollection::reset()
     }
 
     _cc_call_data.inbound_ans_num = 0;
+    _cc_call_data.inbound_call_num = 0;
     _cc_call_data.inbound_call_time = 0;
     _cc_call_data.outbound_ans_num = 0;
     _cc_call_data.outbound_call_num = 0;

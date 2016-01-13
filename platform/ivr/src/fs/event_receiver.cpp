@@ -21,7 +21,9 @@
 #include "inbound_chan_thread.h"
 #include "thread_pool.h"
 #include "ivr_instance_manager.h"
+#include "ivr_data_collection.h"
 
+using ivr::IvrCallDataCollection;
 
 int32_t heartbeat_recv_t::operator()(const bool*, void* param) {
     _shutdown = false;
@@ -118,6 +120,7 @@ int32_t callevent_recv_t::operator()(const bool*, void* param) {
                         param->imssid = 0;
                         param->requestId = 0;
                         InboundChanThread* inbound_thread = new InboundChanThread(param); // thread pool will delete it
+                        IvrCallDataCollection::instance().new_inbound_call(param->ani, param->dnis, param->callid);
                         ThreadPool* threadpool = ThreadPool::get_instance();
                         threadpool->assign_work(inbound_thread);
                         //*/

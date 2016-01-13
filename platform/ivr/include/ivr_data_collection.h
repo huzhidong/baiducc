@@ -24,7 +24,7 @@
 
 namespace ivr {
 // Ã¿¸ö¼¼ÄÜ×éµÄĞÅÏ¢
-typedef struct SkillCallData{
+struct SkillCallData{
 public:
     SkillCallData() : giveuptimes(0){}
 public:
@@ -32,7 +32,7 @@ public:
 };
 
 // µ±Ç°µÄºô½ĞÊı¾İºô½ĞÊı¾İ
-typedef struct IvrCallData{
+struct IvrCallData{
 public:
     IvrCallData()
     : cur_inbound_num(0)
@@ -115,10 +115,10 @@ public:
     // @param called ivr×ª½ÓÂë
     // @parma sessionid ,±ê¼ÇÃ¿Í¨ºô½ĞÌ
     // @return 0:success other:failed
-    int32_t new_inbound_call(const std::string& caller, const std::string& called
+    int32_t new_accept_call(const std::string& caller, const std::string& called
                     , const ivr_session_id_t& sessionId, const std::string& uuid);
 
-    // @brief ºôÈëÁ¿(Î´½øÈëÁ÷³Ì) +1
+    // @brief ºôÈëÁ¿(ËùÓĞµÄÁ¿) +1
     // @param caller ºôÈëºÅÂë
     // @param called ivr×ª½ÓÂë
     // @parma uuit uuid,±ê¼ÇÃ¿Í¨ºô½ĞÌ
@@ -143,16 +143,6 @@ public:
     // @return 0:success other:failed
     int32_t process_event(ivr_base_event_t* event);
     
-    // @brief É¾³ıºôÈëÊı¾İ
-    // @parma sessionId,±ê¼ÇÃ¿Í¨ºô½Ğ
-    // @return 0:success other:failed    
-    int32_t del_inbound_call(const ivr_session_id_t& sessionId);
-
-    // @brief É¾³ıºôÈëÊı¾İ
-    // @parma uuid, ±ê¼ÇÃ¿Í¨ºô½Ğ
-    // @return 0:success other:failed   
-    int32_t del_inbound_call(const std::string& uuid);
-
     // @breif »ñÈ¡ÏµÍ³µ±Ç°ºô½ĞÊı¾İ
     // @param calldata calldataµØÖ·
     // @param result ·µ»ØµÄ¼¼ÄÜ×éÊı¾İ
@@ -205,7 +195,9 @@ private:
 
 typedef std::map<std::string, struct SkillCallData*>::iterator IterSkill;
 typedef std::map<std::string, struct IvrCallData*>::iterator IterIvrNum;
-typedef std::map<ivr_session_id_t, IvrInboundCall*>::iterator iterCall;
+typedef std::map<ivr_session_id_t, IvrInboundCall*>::iterator IterCall;
+typedef std::map<std::string, ivr_session_id_t>::iterator IterSession;
+typedef std::set<std::string>::iterator IterStr;
 }
 
 #endif

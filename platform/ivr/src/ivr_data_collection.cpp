@@ -13,7 +13,7 @@
     }
 
 #define FIND_CALL(sessionid, p) do {\
-    iterCall iter_call = _realtime_call.find(sessionid);\
+    IterCall iter_call = _realtime_call.find(sessionid);\
     if (iter_call == _realtime_call.end()) { \
         IVR_WARN("process event, not found sessionid, sessionid(%lu)", sessionid);\
         return -1; \
@@ -157,7 +157,11 @@ int32_t IvrCallDataCollection::initialize(const char* path)
             IVR_WARN("new ivr num memory failed, ivrnum(%s)", iter->first.c_str());
             return -1;
         }
-        _ivrnum_call_data.insert(std::make_pair(iter->first, p));
+        std::pair<IterIvrNum, bool> ret = _ivrnum_call_data.insert(std::make_pair(iter->first, p));
+        if (!ret.second) {
+            IVR_WARN("insert ivrnum falied, ivrnum(%s)", iter->first.c_str());
+            return -1;
+        }
     }
 
     if (g_inbound_conf.has_default) {
@@ -166,12 +170,19 @@ int32_t IvrCallDataCollection::initialize(const char* path)
             IVR_WARN("new ivr num memory failed, ivrnum(%s)", iter->first.c_str());
             return -1;
         }
-	    _ivrnum_call_data.insert(std::make_pair("default", p));
+	    std::pair<IterIvrNum, bool> ret = _ivrnum_call_data.insert(std::make_pair("default", p));
+        if (!ret.second) {
+            IVR_WARN("insert ivrnum falied, ivrnum(%s)", iter->first.c_str());
+            return -1;
+        }
     }
     // read cached data form file
     _cached_file = path;
     _cached_date = bgcc::TimeUtil::get_date();
-    get_data_from_file();
+    if (get_data_from_file() != 0) {
+        IVR_WARN("get data from file falied");
+		reset();
+    }
     IVR_NOTICE("ivr data collection has been initialize");
     return 0;
 }
@@ -180,7 +191,7 @@ int32_t IvrCallDataCollection::uninitialize()
 {
     BGCC_LOCK(_m_locker);
     // uninitialize real call info
-    for (iterCall iter = _realtime_call.begin(); iter != _realtime_call.end(); ++iter) {
+    for (IterCall iter = _realtime_call.begin(); iter != _realtime_call.end(); ++iter) {
         if (iter->second != NULL) {
             delete iter->second;
             iter->second = NULL;
@@ -241,10 +252,15 @@ int32_t IvrCallDataCollection::new_inbound_call(const std::string& caller, const
     IVR_DEBUG("one new inbound call, caller(%s), called(%s), uuid(%s)"
                 , caller.c_str(), called.c_str(), uuid.c_str());
     BGCC_LOCK(_m_locker);
+	std::pair<IterStr, bool> ret = _refuse_call.insert(uuid);
+    if (!ret.second) {
+        IVR_WARN("insert inbound call falied, caller(%s), called(%s), uuid(%s)"
+                , caller.c_str(), called.c_str(), uuid.c_str());
+        return -1;
+    }
+
     ++_plat_call_data.cur_inbound_num;
     ++_plat_call_data.total_inbound_num;
-    _refuse_call.insert(uuid);
-
     IterIvrNum iter = _ivrnum_call_data.find(called);
     if (iter == _ivrnum_call_data.end()) {
         iter = _ivrnum_call_data.find("default");
@@ -265,7 +281,7 @@ int32_t IvrCallDataCollection::new_inbound_call(const std::string& caller, const
 
 }
 
-int32_t IvrCallDataCollection::new_inbound_call(const std::string& caller, const std::string& called
+int32_t IvrCallDataCollection::new_accept_call(const std::string& caller, const std::string& called
                 , const ivr_session_id_t& sessionId, const std::string& uuid)
 {
     IVR_DEBUG("one new inbound call, caller(%s), called(%s), sessionid(%lu), uuid(%s)"
@@ -276,14 +292,27 @@ int32_t IvrCallDataCollection::new_inbound_call(const std::string& caller, const
         return -1;
     }
     BGCC_LOCK(_m_locker);
+    if (_refuse_call.find(uuid) == _refuse_call.end()) {
+        IVR_WARN("can,t find uuid, caller(%s), called(%s), uuid(%s)",
+                caller.c_str(), called.c_str(), uuid.c_str());
+        return -1;
+    }
+    // 删除refuse中的uuid
+    _refuse_call.erase(uuid);
     p->init_new_call(sessionId, caller, called);
     p->set_state(IvrInboundCall::ACCEPT);
+    std::pair<IterCall, bool> ret_call = _realtime_call.insert(std::make_pair(sessionId, p));
+    if (!ret_call.second) {
+        IVR_WARN("insert realtime call falied, caller(%s), called(%s)", caller.c_str(), called.c_str());
+        return -1;
+    }
+    std::pair<IterSession, bool> ret_uuid = _first_uuid_map.insert(std::make_pair(uuid, sessionId));
+    if (!ret_uuid.second) {
+        IVR_WARN("insert first uuid falied, caller(%s), called(%s)", caller.c_str(), called.c_str());
+        return -1;
+    }
     ++_plat_call_data.cur_accept_num;
     ++_plat_call_data.total_accept_num;
-    ++_plat_call_data.cur_inbound_num;
-    ++_plat_call_data.total_inbound_num;
-    _realtime_call.insert(std::make_pair(sessionId, p));
-    _first_uuid_map.insert(std::make_pair(uuid, sessionId));
     IterIvrNum iter = _ivrnum_call_data.find(called);
     if (iter == _ivrnum_call_data.end()) {
         iter = _ivrnum_call_data.find("default");
@@ -298,42 +327,8 @@ int32_t IvrCallDataCollection::new_inbound_call(const std::string& caller, const
     }
     ++iter->second->cur_accept_num;
     ++iter->second->total_accept_num;
-    ++iter->second->cur_inbound_num;
-    ++iter->second->total_inbound_num;
     IVR_DEBUG("update ivr num info, caller(%s), called(%s), sessionid(%lu), uuid(%s)"
                 , caller.c_str(), called.c_str(), sessionId, uuid.c_str());
-    return 0;
-}
-
-int32_t IvrCallDataCollection::del_inbound_call(const ivr_session_id_t& sessionId)
-{
-    IVR_DEBUG("del inbound call sessionid(%lu)", sessionId);
-    BGCC_LOCK(_m_locker);
-    iterCall iter = _realtime_call.find(sessionId);
-    if (iter != _realtime_call.end()) {
-        if (iter->second != NULL) {
-            delete iter->second;
-            iter->second = NULL;
-        }
-        _realtime_call.erase(iter->first);
-    }
-    else {
-        IVR_DEBUG("not found inbound call sessionid(%lu)", sessionId);
-    }
-    return 0;
-}
-
-int32_t IvrCallDataCollection::del_inbound_call(const std::string& uuid)
-{
-    IVR_DEBUG("del inbound call uuid(%s)", uuid.c_str());
-    BGCC_LOCK(_m_locker);
-    std::set<std::string>::iterator iter = _refuse_call.find(uuid);
-    if (iter != _refuse_call.end()) {
-        _refuse_call.erase(iter);
-    }
-    else {
-        IVR_DEBUG("not found inbound call uuid(%s)", uuid.c_str());
-    }
     return 0;
 }
 
@@ -342,7 +337,7 @@ int32_t IvrCallDataCollection::set_state(const ivr_session_id_t& sessionId
 {
     IVR_DEBUG("set state sessionid(%lu), state(%d)", sessionId, state);
     BGCC_LOCK(_m_locker);
-    iterCall iter = _realtime_call.find(sessionId);
+    IterCall iter = _realtime_call.find(sessionId);
     if (iter == _realtime_call.end()) {
         IVR_DEBUG("not found inbound call sessionid(%lu)", sessionId);
         return -1;
@@ -410,7 +405,14 @@ int32_t IvrCallDataCollection::is_giveup_call(IvrInboundCall *call
                 return -1;                        
             }
             ++p->giveuptimes;
-             _plat_call_data.skill_call_data.insert(std::make_pair(call_skill, p));
+            std::pair<IterSkill, bool> ret = 
+                    _plat_call_data.skill_call_data.insert(std::make_pair(call_skill, p));
+            if (!ret.second) {
+                IVR_WARN("insert skill failed, sessionid(%lu), skill(%s)",
+                        sessionid, call_skill.c_str());
+                return -1;
+            }
+             
         }
         else {
             if (iter_skill->second == NULL) {
@@ -432,7 +434,13 @@ int32_t IvrCallDataCollection::is_giveup_call(IvrInboundCall *call
                     return -1;                        
                 }
                 ++p->giveuptimes;
-                iter_ivrnum->second->skill_call_data.insert(std::make_pair(call_skill, p));
+                std::pair<IterSkill, bool> ret = 
+                        iter_ivrnum->second->skill_call_data.insert(std::make_pair(call_skill, p));
+                if (!ret.second) {
+                    IVR_WARN("insert skill failed, sessionid(%lu), skill(%s)",
+                            sessionid, call_skill.c_str());
+                    return -1;
+                }
             }
             else {
                  if (iter_skill->second == NULL) {
@@ -512,6 +520,7 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
         std::map<std::string, ivr_session_id_t>::iterator iter = _second_uuid_map.find(uuid);
         if (iter == _second_uuid_map.end()) {
             IVR_WARN("not found session");
+            return 0;
         }
         sessionid = iter->second;
         BGCC_LOCK(_m_locker);
@@ -528,10 +537,14 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
         // first refuse call
         if (_refuse_call.find(uuid) != _refuse_call.end()) {
             _refuse_call.erase(uuid);
-            --_plat_call_data.cur_inbound_num;
+            if (_plat_call_data.cur_inbound_num > 0) {
+                --_plat_call_data.cur_inbound_num;
+            }
             IterIvrNum iter_ivrnum = _ivrnum_call_data.find(called);
             if (iter_ivrnum != _ivrnum_call_data.end() && iter_ivrnum->second != NULL) {
-                --iter_ivrnum->second->cur_inbound_num;
+                if (iter_ivrnum->second->cur_inbound_num > 0) {
+                    --iter_ivrnum->second->cur_inbound_num;
+                }
             }
             IVR_NOTICE("one refuse call hangup,caller(%s), called(%s)", caller.c_str(), called.c_str());
         }
@@ -543,12 +556,20 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
             FIND_CALL(sessionid, cur_call);
             is_giveup_call(cur_call, sessionid, called);
             cur_call->set_state(IvrInboundCall::THISPARTYHANGUP);
-            --_plat_call_data.cur_accept_num;
-            --_plat_call_data.cur_inbound_num;
+            if (_plat_call_data.cur_accept_num > 0) {
+                --_plat_call_data.cur_accept_num;
+            }
+            if (_plat_call_data.cur_inbound_num > 0) {
+                --_plat_call_data.cur_inbound_num;
+            }
             IterIvrNum iter_ivrnum = _ivrnum_call_data.find(called);
             if (iter_ivrnum != _ivrnum_call_data.end() && iter_ivrnum->second != NULL) {
-                --iter_ivrnum->second->cur_accept_num;
-                --iter_ivrnum->second->cur_inbound_num;
+                if (iter_ivrnum->second->cur_accept_num > 0) {
+                    --iter_ivrnum->second->cur_accept_num;
+                }
+                if (iter_ivrnum->second->cur_inbound_num > 0) {
+                    --iter_ivrnum->second->cur_inbound_num;
+                }
             }
             if (cur_call != NULL) {
                 delete cur_call;
@@ -564,12 +585,20 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
             sessionid = iter->second;
             FIND_CALL(sessionid, cur_call);
             cur_call->set_state(IvrInboundCall::OTHERPARTYHANGUP);
-            --_plat_call_data.cur_accept_num;
-            --_plat_call_data.cur_inbound_num;
+            if (_plat_call_data.cur_accept_num > 0) {
+                --_plat_call_data.cur_accept_num;
+            }
+            if (_plat_call_data.cur_inbound_num > 0) {
+                --_plat_call_data.cur_inbound_num;
+            }
             IterIvrNum iter_ivrnum = _ivrnum_call_data.find(other_called);
             if (iter_ivrnum != _ivrnum_call_data.end() && iter_ivrnum->second != NULL) {
-                --iter_ivrnum->second->cur_accept_num;
-                --iter_ivrnum->second->cur_inbound_num;
+                if (iter_ivrnum->second->cur_accept_num > 0) {
+                    --iter_ivrnum->second->cur_accept_num;
+                }
+                if (iter_ivrnum->second->cur_inbound_num > 0) {
+                    --iter_ivrnum->second->cur_inbound_num;
+                }
             }
             if (cur_call != NULL) {
                 delete cur_call;
@@ -775,7 +804,11 @@ int32_t IvrCallDataCollection::get_data_from_file()
             return -1;
         }
         bgcc::StringUtil::str2uint32(var.c_str(), p->giveuptimes);
-        _plat_call_data.skill_call_data.insert(std::make_pair(key, p));
+        std::pair<IterSkill, bool> ret = _plat_call_data.skill_call_data.insert(std::make_pair(key, p));
+        if (!ret.second) {
+            IVR_WARN("insert skill failed, skill(%s)", key.c_str());
+            return -1;
+        }
         IVR_NOTICE("|SkillName(%s)  | GiveupTimes(%d)", key.c_str(), p->giveuptimes);
     }
 
@@ -787,11 +820,6 @@ int32_t IvrCallDataCollection::get_data_from_file()
     }
     for(bgcc2::ConfUnit::const_iterator iter = section_ivrnum.begin()
             ; iter != section_ivrnum.end(); ++iter) {
-        struct IvrCallData *info = new (std::nothrow) struct IvrCallData;
-        if (info == NULL) {
-            IVR_WARN("new ivrnum info failed");
-            return -1;
-        }
         bgcc2::ConfUnit& ivrnum = **iter;
         bgcc2::ConfUnit& name = ivrnum["IvrNum"];
         bgcc2::ConfUnit& total_inbound_num_ivrnum = ivrnum["TotalInboundNum"];
@@ -805,27 +833,33 @@ int32_t IvrCallDataCollection::get_data_from_file()
         CHECK_CONF(total_accept_num_ivrnum, bgcc::ConfUnit::UT_STRING);
         CHECK_CONF(giveuptimes_ivrnum, bgcc::ConfUnit::UT_STRING);
         CHECK_CONF(skill_info_ivrnum, bgcc::ConfUnit::UT_STRING);
-        if (!bgcc::StringUtil::str2uint32(total_inbound_num_ivrnum.to_string().c_str(), info->total_inbound_num)) {
+        IterIvrNum it = _ivrnum_call_data.find(name.to_string());
+        if (it == _ivrnum_call_data.end()) {
+            // 如果不是使用中的ivr接入码，则不读取
+            IVR_WARN("ivr num is not use, ivrnum(%s)", name.to_string().c_str());
+			continue;
+        }
+        if (!bgcc::StringUtil::str2uint32(total_inbound_num_ivrnum.to_string().c_str(), it->second->total_inbound_num)) {
             IVR_WARN("parse total_inbound_num(%s) failed", total_inbound_num_ivrnum.to_string().c_str());
             return -1;
         }
-        if (!bgcc::StringUtil::str2uint32(trans_num_ivrnum.to_string().c_str(), info->trans_num)) {
+        if (!bgcc::StringUtil::str2uint32(trans_num_ivrnum.to_string().c_str(), it->second->trans_num)) {
             IVR_WARN("parse trans_num(%s) failed", trans_num_ivrnum.to_string().c_str());
             return -1;
         }
-        if (!bgcc::StringUtil::str2uint32(total_accept_num_ivrnum.to_string().c_str(), info->total_accept_num)) {
+        if (!bgcc::StringUtil::str2uint32(total_accept_num_ivrnum.to_string().c_str(), it->second->total_accept_num)) {
             IVR_WARN("parse total_accept_num(%s) failed", total_accept_num_ivrnum.to_string().c_str());
             return -1;
         }
-        if (!bgcc::StringUtil::str2uint32(giveuptimes_ivrnum.to_string().c_str(), info->giveuptimes)) {
+        if (!bgcc::StringUtil::str2uint32(giveuptimes_ivrnum.to_string().c_str(), it->second->giveuptimes)) {
             IVR_WARN("parse giveuptimes(%s) failed", giveuptimes_ivrnum.to_string().c_str());
             return -1;
         }
         IVR_NOTICE("|IvrNum  | %s", name.to_string().c_str());
-        IVR_NOTICE("    |TotalInboundNum  | %d", info->total_inbound_num);
-        IVR_NOTICE("    |TransNum  | %d", info->trans_num);
-        IVR_NOTICE("    |TotalAcceptNum  | %d", info->total_accept_num);
-        IVR_NOTICE("    |GiveupTimes  | %d", info->giveuptimes);
+        IVR_NOTICE("    |TotalInboundNum  | %d", it->second->total_inbound_num);
+        IVR_NOTICE("    |TransNum  | %d", it->second->trans_num);
+        IVR_NOTICE("    |TotalAcceptNum  | %d", it->second->total_accept_num);
+        IVR_NOTICE("    |GiveupTimes  | %d", it->second->giveuptimes);
         std::vector<std::string> vecp;
         bgcc::StringUtil::split_string(skill_info_ivrnum.to_string(), ",", vecp, true);
         for (std::vector<std::string>::iterator iter_v = vecp.begin(); iter_v != vecp.end(); ++iter_v) {
@@ -843,10 +877,13 @@ int32_t IvrCallDataCollection::get_data_from_file()
                 return -1;
             }
             bgcc::StringUtil::str2uint32(var.c_str(), p->giveuptimes);
-            info->skill_call_data.insert(std::make_pair(key, p));
+            std::pair<IterSkill, bool> ret = it->second->skill_call_data.insert(std::make_pair(key, p));
+            if (!ret.second) {
+                IVR_WARN("insert skill failed, skill(%s)", key.c_str());
+                return -1;
+            }
             IVR_NOTICE("    |SkillName(%s)  | GiveupTimes(%d)", key.c_str(), p->giveuptimes);
         }
-        _ivrnum_call_data.insert(std::make_pair(name.to_string(), info));
     }
 
     IVR_NOTICE("begin end =========================================");   
@@ -923,9 +960,13 @@ void IvrCallDataCollection::clear_invaid_call()
         IVR_WARN("w_lock failed!");
         return;
     }
+    // clear refuse call
+    _plat_call_data.cur_inbound_num = _realtime_call.size();
+    _refuse_call.clear();
+    _plat_call_data.cur_accept_num = _plat_call_data.cur_inbound_num;
     const static time_t interval = 6 * 60 * 30;
     time_t cur_time = time(NULL);
-    for (iterCall iter = _realtime_call.begin(); iter != _realtime_call.end(); ++iter) {
+    for (IterCall iter = _realtime_call.begin(); iter != _realtime_call.end(); ++iter) {
         if (iter->second == NULL) {
             IVR_NOTICE("clear one invaid call, sessionid(%lu)", iter->first);
             _realtime_call.erase(iter->first);

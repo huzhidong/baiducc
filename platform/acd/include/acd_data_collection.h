@@ -29,14 +29,17 @@
 typedef struct {
     uint32_t outbound_call_num; //呼出量
     uint32_t outbound_ans_num; //呼出接通量
+    uint32_t inbound_call_num; //呼入电话量
     uint32_t inbound_ans_num; //呼入接通量
     uint32_t inbound_call_time; //呼入电话总时长
+    uint32_t inbound_alerting_time; //呼入电话振铃总时长
     uint32_t outbound_call_time; //呼出电话总时长
 } CCCallData;
 
 typedef struct {
     uint32_t inbound_call_time; //呼入通话时长
     uint32_t inbound_alerting_time; //呼入振铃时长
+    uint32_t inbound_call_num; //呼入电话量
     uint32_t inbound_answer_num; //呼入接通量
 } SkillCallData;
 
