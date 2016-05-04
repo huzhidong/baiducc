@@ -27,7 +27,7 @@
 */
 class http_t {
 private:
-    const static uint32_t MAX_BUF = 4096;
+    const static uint32_t MAX_BUF = 40960;
     /**
     * @brief curl用到的结构体
     *   detail description

@@ -109,6 +109,7 @@ methods:
 		[id(80), helpstring("方法JumptheQueue")] LONG JumptheQueue(LONGLONG requestId);
 		[id(81), helpstring("方法TransIVR")] LONG TransIVR(BSTR transferNum);
 		[id(82), helpstring("方法TransIVREx")] LONG TransIVREx(BSTR callerNum, BSTR transferNum);
+		[id(83), helpstring("方法SinglestepTransferNum")] BSTR GetSinglestepTransferNum(void);
 	};
 
 	//  CCCAgentBarCtrl 的事件调度接口
@@ -124,7 +125,7 @@ methods:
 		[id(1)] void OnUnLogin(           LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);
 		[id(2)] void OnReady(             LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);
 		[id(3)] void OnBusy(              LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);
-		[id(4)] void OnRest(              LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);
+		[id(4)] void OnRest(              LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp, BSTR restReson);
 		[id(5)] void OnLock(              LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);
 		[id(6)] void OnAlerting(          LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);
 		[id(7)] void OnHarfAlerting(      LONG eventID, BSTR callID, LONGLONG contactID, LONG partyNum, BSTR otherParty, LONG otherPartyAttribute, BSTR originatingParty, BSTR originalANI, BSTR originalDNIS, LONG reason, LONGLONG timestamp);

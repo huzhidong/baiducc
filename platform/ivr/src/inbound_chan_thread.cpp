@@ -274,7 +274,6 @@ uint32_t InboundChanThread::execute(void* taskparam) {
         // clear all timer
         resource->timer->clear_all_timer();
     }
-
 CHAN_END:
     FlowManager::detach_flow(&script.flow);
     {

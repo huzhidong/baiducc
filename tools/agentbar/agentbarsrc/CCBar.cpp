@@ -1,18 +1,8 @@
-/*
- * Copyright 2002-2014 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      CC/LICENSE
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// *****************************************************************************
+//  Name:		CCCBar，控件界面
+//  Author:		Yanhl
+//  Version:	1.0
+// *****************************************************************************
 
 #include "CCBar.h"
 #include "CCAgentBarCtrl.h"
@@ -1306,9 +1296,13 @@ LRESULT CCCBar::OnAgentEvent(WPARAM wParam, LPARAM lParam)
 				m_btnStatus.btnReady = true;
 				m_btnStatus.btnBusy = true;
 				m_stcAgentState.SetStaticexText("休息");
+				int index = m_cmbRest.GetCurSel();
+				CString reason;
+				if(index != -1)
+					m_cmbRest.GetLBText(index, reason);
 				// 事件回调
 				p_m_BarCtrl->OnRest(pAE->eventId.get_value(), pAE->callId.c_str(), pAE->sessionId, pAE->partyNum, pAE->otherParty.c_str(), pAE->otherAttr.get_value(), 
-					pAE->originatingParty.c_str(), pAE->originalAni.c_str(), pAE->originalDnis.c_str(), pAE->reason.get_value(), pAE->timestamp);
+					pAE->originatingParty.c_str(), pAE->originalAni.c_str(), pAE->originalDnis.c_str(), pAE->reason.get_value(), pAE->timestamp, reason);
 				break;
 			}
 		case acd::AgentStatusT::AsLockState:
@@ -1921,15 +1915,16 @@ LONG CCCBar::BReset()
 LONG CCCBar::BMakeCall(const char *dest, const char *showANI, const char *showDest, acd::CallModeT callMode, acd::CallTypeT callType)
 {
 	LONG ret = AGENTBARERROR_SUCCESS;
-        string t_dest = string(dest);
-        unsigned int len = t_dest.length();
-        for (int i = 0; i < len; i++){
-            if ((t_dest.at(i) < '0' || t_dest.at(i) > '9') && t_dest.at(i) != '-'){
-                ret = AGENTBARERROR_BAR_WRONGNUM;
-                Tool::m_Logger.WriteLog("CCCBar", "BMakeCall", "dest num is not in true format", ret);
-                return ret;
-            }
+    string t_dest = string(dest);
+    unsigned int len = t_dest.length();
+	m_singlestepTransferNum = "";
+    for (int i = 0; i < len; i++){
+        if ((t_dest.at(i) < '0' || t_dest.at(i) > '9') && t_dest.at(i) != '-'){
+            ret = AGENTBARERROR_BAR_WRONGNUM;
+            Tool::m_Logger.WriteLog("CCCBar", "BMakeCall", "dest num is not in true format", ret);
+            return ret;
         }
+    }
 	if(m_AgentStatus != acd::AgentStatusT::AsBusyState)
 	{
 		ret = AGENTBARERROR_BAR_WRONGSTATE;
@@ -2022,7 +2017,8 @@ LONG CCCBar::BRetrieve()
 	return ret;
 }
 
-LONG CCCBar::BConsult(const char *consultNum, const char *showANI, const char *showDest, acd::CallTypeT callType)
+LONG CCCBar::BConsult(const char *consultNum, const char *showANI, const char *showDest, 
+                        acd::CallTypeT callType)
 {
 	LONG ret = AGENTBARERROR_SUCCESS;
 	if(m_AgentStatus != acd::AgentStatusT::AsConnectedState)
@@ -2042,10 +2038,10 @@ LONG CCCBar::BConsult(const char *consultNum, const char *showANI, const char *s
 			callerId = m_strDN;
 			break;
 		default:
-                     CString ss;
-			ss.Format("%d", callType);
-			callerId = ss + "#" + m_strDN;
-			break;
+                    CString ss;
+                    ss.Format("%d", callType);
+                    callerId = ss + "#" + m_strDN;
+                    break;
 		}
 		ret = m_acd.AcdConsult(m_strAgentID, callerId, consultNum, showANI, showDest, callType);
 	}
@@ -2097,9 +2093,11 @@ LONG CCCBar::BSingleStepTransfer(const char *transferNum, const char *showANI, c
 		{
 		case acd::CallTypeT::CtAgent:
 			callerId = m_strAgentTag + m_strDN;
+			m_singlestepTransferNum = transferNum;
 			break;
 		case acd::CallTypeT::CtOut:
 			callerId = m_strDN;
+			m_singlestepTransferNum = transferNum;
 			break;
 		default:
 			callerId = m_strDN;
@@ -2128,6 +2126,7 @@ LONG CCCBar::BConference()
 LONG CCCBar::BListen(const char *destAgentId, const char *forCallerDispNum, const char *forCalleeDispNum)
 {
 	LONG ret = AGENTBARERROR_SUCCESS;
+	m_singlestepTransferNum = "";
 	if(m_AgentStatus != acd::AgentStatusT::AsReadyState && m_AgentStatus != acd::AgentStatusT::AsBusyState)
 	{
 		ret = AGENTBARERROR_BAR_WRONGSTATE;
@@ -2158,6 +2157,7 @@ LONG CCCBar::BStopListen(const char *destAgentId)
 LONG CCCBar::BInsert(const char *destAgentId, const char *forCallerDispNum, const char *forCalleeDispNum)
 {
 	LONG ret = AGENTBARERROR_SUCCESS;
+	m_singlestepTransferNum = "";
 	if(m_AgentStatus != acd::AgentStatusT::AsReadyState && m_AgentStatus != acd::AgentStatusT::AsBusyState)
 	{
 		ret = AGENTBARERROR_BAR_WRONGSTATE;

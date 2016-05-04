@@ -39,6 +39,17 @@ time_t _m_answer_time;
 time_t _m_trans_time;
 time_t _m_exit_flow_time;
 time_t _m_hangup_time;
+
+int32_t IvrInboundCall::update_route_skill_endtime(const std::string& skill_name) {
+    _m_ivr_callinfo.update_skill(time(NULL), skill_name);
+    return 0;
+}
+
+int32_t IvrInboundCall::set_appdata(const std::string& appdata) {
+    _m_ivr_callinfo.set_appdata(appdata);
+    return 0;
+}
+
 int32_t IvrInboundCall::set_state(int32_t state)
 {
     time_t cur_time = time(NULL);
@@ -75,19 +86,36 @@ int32_t IvrInboundCall::set_state(int32_t state)
         }
         case EXITFLOW:
         case CALLWITHOUTFOLW: {
+            //ivr_flow_end
             _m_ivr_callinfo.set_exit_flow_time(cur_time);
+            if (_has_hangup) {
+                _m_ivr_callinfo.write_call_log();
+            } else {
+                _exit_flow = true;
+            }
             break;
         }
         case THISPARTYHANGUP: {
             _m_ivr_callinfo.set_hangup_time(cur_time);
             _m_ivr_callinfo.set_release_cause(ReleaseCauseT::THISPARTY);
-            //write call log
+			if (_exit_flow) {
+                //write call log
+                _m_ivr_callinfo.write_call_log();
+			} else {
+                _has_hangup = true;
+			}
             break;
         }
         case OTHERPARTYHANGUP: {
             _m_ivr_callinfo.set_hangup_time(cur_time);
             _m_ivr_callinfo.set_release_cause(ReleaseCauseT::OTHERPARTY);
-            //write call log
+			if (_exit_flow) {
+                //write call log
+                _m_ivr_callinfo.write_call_log();
+
+			} else {
+                _has_hangup = true;
+			}
             break;
         }
         default:
@@ -102,19 +130,24 @@ int32_t IvrInboundCall::get_state()
     return _m_state;
 }
 
-void IvrInboundCall::init_new_call(const ivr_session_id_t& sessionId, const string &caller, const string &callee)
+void IvrInboundCall::init_new_call(const ivr_session_id_t& sessionId, const string &callid, const string &caller, const string &callee)
 {
-    _m_ivr_callinfo.initial(sessionId, caller, callee);
+    _m_ivr_callinfo.initial(sessionId, callid, caller, callee);
 }
 
 void IvrInboundCall::set_skill(const std::string& skill)
 {
-    _m_ivr_callinfo.set_skill(skill);
+    _m_ivr_callinfo.set_skill(time(NULL), skill);
 }
 
 std::string IvrInboundCall::get_skill()
 {
     return _m_ivr_callinfo.get_skill();
+}
+
+bool IvrInboundCall::get_exit_flow()
+{
+    return _exit_flow;
 }
 
 std::string IvrInboundCall::get_called()
@@ -282,7 +315,7 @@ int32_t IvrCallDataCollection::new_inbound_call(const std::string& caller, const
 }
 
 int32_t IvrCallDataCollection::new_accept_call(const std::string& caller, const std::string& called
-                , const ivr_session_id_t& sessionId, const std::string& uuid)
+                , const ivr_session_id_t& sessionId, const std::string& uuid /* call_id */)
 {
     IVR_DEBUG("one new inbound call, caller(%s), called(%s), sessionid(%lu), uuid(%s)"
                     , caller.c_str(), called.c_str(), sessionId, uuid.c_str());
@@ -299,8 +332,13 @@ int32_t IvrCallDataCollection::new_accept_call(const std::string& caller, const 
     }
     // É¾³ýrefuseÖÐµÄuuid
     _refuse_call.erase(uuid);
-    p->init_new_call(sessionId, caller, called);
+    p->init_new_call(sessionId, uuid, caller, called);
     p->set_state(IvrInboundCall::ACCEPT);
+    //set callid
+    //set caller
+    //set called
+    //set BEGIN
+    //insert map
     std::pair<IterCall, bool> ret_call = _realtime_call.insert(std::make_pair(sessionId, p));
     if (!ret_call.second) {
         IVR_WARN("insert realtime call falied, caller(%s), called(%s)", caller.c_str(), called.c_str());
@@ -332,15 +370,49 @@ int32_t IvrCallDataCollection::new_accept_call(const std::string& caller, const 
     return 0;
 }
 
+int32_t IvrCallDataCollection::set_appdata(
+        const ivr_session_id_t& sessionId, 
+        const std::string& appdata) {
+    IterCall iter = _realtime_call.find(sessionId);
+    if (iter == _realtime_call.end()) {
+        IVR_DEBUG("not found inbound call sessionid(%lu) in realtime call", sessionId);
+        iter = _exitflow_call.find(sessionId);
+		if (iter == _exitflow_call.end()) {
+            IVR_DEBUG("not found inbound call sessionid(%lu) in exitflow call", sessionId);
+            return -1;
+		}
+    }
+    iter->second->set_appdata(appdata);
+    return 0;
+}
+
 int32_t IvrCallDataCollection::set_state(const ivr_session_id_t& sessionId
                 , const int32_t state, const std::string& skill)
 {
     IVR_DEBUG("set state sessionid(%lu), state(%d)", sessionId, state);
     BGCC_LOCK(_m_locker);
-    IterCall iter = _realtime_call.find(sessionId);
+
+    IterCall iter = _exitflow_call.find(sessionId);
+	if (iter == _exitflow_call.end()) {
+        IVR_DEBUG("not found inbound call sessionid(%lu) in exitflow call", sessionId);
+	} else {
+        if (state != IvrInboundCall::EXITFLOW && state != IvrInboundCall::CALLWITHOUTFOLW) {
+            IVR_DEBUG("not exitflow state sessionid(%lu) ,continue", sessionId);
+            return 0;
+        }
+		iter->second->set_state(state);
+        if (iter->second != NULL) {
+            delete iter->second;
+            iter->second = NULL;
+        }
+        _exitflow_call.erase(sessionId);
+		return 0;
+	}
+
+    iter = _realtime_call.find(sessionId);
     if (iter == _realtime_call.end()) {
-        IVR_DEBUG("not found inbound call sessionid(%lu)", sessionId);
-        return -1;
+        IVR_DEBUG("not found inbound call sessionid(%lu) in realtime call", sessionId);
+		return -1;
     }
     std::string called = iter->second->get_called();
     switch (state) {
@@ -461,10 +533,15 @@ int32_t IvrCallDataCollection::process_event(ivr_base_event_t* event)
     if (event->evt_type != ivr_base_event_t::IMS_EVENT) {
         return -1;
     }
+    ivr_ims_event_t *evt = (struct ivr_ims_event_t*)event;
     struct IvrInboundCall *cur_call = NULL;
     BGCC_LOCK(_m_locker);
     FIND_CALL(ivrsid, cur_call);
     cur_call->set_state(IvrInboundCall::INFLOW);    
+    if (evt->evt_name == ivr_ims_event_t::IVR_EVT_IMS_ROUTE_RESPONSE && 
+        evt->data.requestType == ims_routerequest_type_t::RR_TypeSkill) {
+        cur_call->update_route_skill_endtime(evt->data.requestArgs);
+    }
     return 0;    
 }
 
@@ -485,7 +562,7 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
             sessionid = iter->second;
             BGCC_LOCK(_m_locker);
             FIND_CALL(sessionid, cur_call);
-            cur_call->set_state(IvrInboundCall::CUSTOMERANSWER);
+            cur_call->set_state(IvrInboundCall::AGENTANSWER);
             IVR_DEBUG("set call to state(%d), sessionid(%lu)", IvrInboundCall::CUSTOMERANSWER, sessionid);
         }
         else if ((iter = _first_uuid_map.find(uuid)) != _first_uuid_map.end()) {
@@ -493,7 +570,7 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
             sessionid = iter->second;
             BGCC_LOCK(_m_locker);
             FIND_CALL(sessionid, cur_call);
-            cur_call->set_state(IvrInboundCall::AGENTANSWER);
+            cur_call->set_state(IvrInboundCall::CUSTOMERANSWER);
             IVR_DEBUG("set call to state(%d), sessionid(%lu)", IvrInboundCall::AGENTANSWER, sessionid);
         }
     }
@@ -529,6 +606,7 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
         IVR_DEBUG("set call to state(%d), sessionid(%lu)", IvrInboundCall::CONNECTED, sessionid);
     }
     else if (0 == strcasecmp(event.name, "CHANNEL_HANGUP")) {
+        //save file  zzy
         std::string other_uuid = event.event_data.normal.other_uuid;
         std::string caller = event.event_data.normal.caller_no;
         std::string called = event.event_data.normal.called_no;
@@ -571,9 +649,17 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
                     --iter_ivrnum->second->cur_inbound_num;
                 }
             }
-            if (cur_call != NULL) {
-                delete cur_call;
-                cur_call = NULL;
+            if (!cur_call->get_exit_flow()) {
+                std::pair<IterCall, bool> ret_call = _exitflow_call.insert(std::make_pair(sessionid, cur_call));
+                if (!ret_call.second) {
+                    IVR_WARN("insert realtime call falied, caller(%s), called(%s)", caller.c_str(), called.c_str());
+                    return -1;
+                }
+            } else {
+                if (cur_call != NULL) {
+                    delete cur_call;
+                    cur_call = NULL;
+                }
             }
             _realtime_call.erase(sessionid);
             _first_uuid_map.erase(uuid);
@@ -600,9 +686,17 @@ int32_t IvrCallDataCollection::process_event(struct fs_event& event)
                     --iter_ivrnum->second->cur_inbound_num;
                 }
             }
-            if (cur_call != NULL) {
-                delete cur_call;
-                cur_call = NULL;
+            if (!cur_call->get_exit_flow()) {
+                std::pair<IterCall, bool> ret_call = _exitflow_call.insert(std::make_pair(sessionid, cur_call));
+                if (!ret_call.second) {
+                    IVR_WARN("insert realtime call falied, caller(%s), called(%s)", caller.c_str(), called.c_str());
+                    return -1;
+                }
+            } else {
+                if (cur_call != NULL) {
+                    delete cur_call;
+                    cur_call = NULL;
+                }
             }
             _realtime_call.erase(sessionid);
             _second_uuid_map.erase(uuid);

@@ -459,6 +459,12 @@ private:
 extern int32_t g_stopped;
 extern sem_t g_stop_sem;
 
+//logger config
+extern uint32_t g_log_count;
+extern uint32_t g_log_filecount;
+extern uint32_t g_log_level;
+extern uint32_t g_log_timeout;
+
 extern string g_server_ip;
 extern uint32_t g_server_port;
 extern uint32_t g_reload_port;

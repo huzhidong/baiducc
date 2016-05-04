@@ -23,6 +23,13 @@
 int32_t g_stopped = 0;
 sem_t g_stop_sem;
 
+//looger config
+uint32_t g_log_count;
+uint32_t g_log_filecount;
+uint32_t g_log_level;
+uint32_t g_log_timeout;
+
+
 //system configuration
 string g_server_ip;
 uint32_t g_server_port = 0;

@@ -72,18 +72,23 @@ public:
         UNKNOW
     }; // state
 
-    IvrInboundCall() : _m_state(UNKNOW){}
+    IvrInboundCall() : _m_state(UNKNOW), _has_hangup(false), _exit_flow(false){}
     ~IvrInboundCall(){}
+    int32_t update_route_skill_endtime(const std::string& skill_name);
+    int32_t set_appdata(const std::string& appdata);
     int32_t set_state(int32_t state);//设置当前状态
     int32_t get_state();//设置当前状态
-    void init_new_call(const ivr_session_id_t& sessionId, const string &caller, const string &callee); 
+    void init_new_call(const ivr_session_id_t& sessionId, const string &callid, const string &caller, const string &callee); 
     void set_skill(const std::string& skill);
     std::string get_skill();
     std::string get_called();
+    bool get_exit_flow();
     void set_agent_num(const string &agentnum);
     time_t get_begintime();
 private:
     int32_t _m_state;
+    bool _has_hangup;
+    bool _exit_flow;
     IvrCallInfo _m_ivr_callinfo;
 } ;
 
@@ -131,6 +136,7 @@ public:
     // @parma state 状态 
     // @parma skill 技能，默认为空
     // @return 0:success other:failed   
+    int32_t set_appdata(const ivr_session_id_t& sessionId, const std::string& appdata);
     int32_t set_state(const ivr_session_id_t& sessionId, const int32_t state, const std::string& skill);
     
     // @brief 处理事件
@@ -188,6 +194,7 @@ private:
     struct IvrCallData _plat_call_data;//当前的呼叫数据
     std::map<std::string, struct IvrCallData*> _ivrnum_call_data; // 按ivr接入码存储的当天呼叫数据
     std::map<ivr_session_id_t, IvrInboundCall*> _realtime_call;
+    std::map<ivr_session_id_t, IvrInboundCall*> _exitflow_call;
     std::map<std::string, ivr_session_id_t> _first_uuid_map;
     std::map<std::string, ivr_session_id_t> _second_uuid_map;
     std::set<std::string> _refuse_call;

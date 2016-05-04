@@ -1,18 +1,8 @@
-/*
- * Copyright 2002-2014 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      CC/LICENSE
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// *****************************************************************************
+//  Name:		CCCAgentBarCtrl，控件基本类
+//  Author:		Yanhl
+//  Version:	1.0
+// *****************************************************************************
 
 #include "CCAgentBarCtrl.h"
 #include "CCAgentBar.h"
@@ -116,6 +106,7 @@ BEGIN_DISPATCH_MAP(CCCAgentBarCtrl, COleControl)
 	DISP_FUNCTION_ID(CCCAgentBarCtrl, "JumptheQueue", dispidJumptheQueue, JumptheQueue, VT_I4, VTS_I8)
 	DISP_FUNCTION_ID(CCCAgentBarCtrl, "TransIVR", dispidTransIVR, TransIVR, VT_I4, VTS_BSTR)
 	DISP_FUNCTION_ID(CCCAgentBarCtrl, "TransIVREx", dispidTransIVREx, TransIVREx, VT_I4, VTS_BSTR VTS_BSTR)
+	DISP_FUNCTION_ID(CCCAgentBarCtrl, "SinglestepTransferNum", dispidSinglestepTransferNum, GetSinglestepTransferNum, VT_BSTR, VTS_NONE)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -123,7 +114,7 @@ BEGIN_EVENT_MAP(CCCAgentBarCtrl, COleControl)
 	EVENT_CUSTOM_ID("OnUnLogin",           eventidOnUnLogin,           OnUnLogin,           VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
 	EVENT_CUSTOM_ID("OnReady",             eventidOnReady,             OnReady,             VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
 	EVENT_CUSTOM_ID("OnBusy",              eventidOnBusy,              OnBusy,              VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
-	EVENT_CUSTOM_ID("OnRest",              eventidOnRest,              OnRest,              VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
+	EVENT_CUSTOM_ID("OnRest",              eventidOnRest,              OnRest,              VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8 VTS_BSTR)
 	EVENT_CUSTOM_ID("OnLock",              eventidOnLock,              OnLock,              VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
 	EVENT_CUSTOM_ID("OnAlerting",          eventidOnAlerting,          OnAlerting,          VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
 	EVENT_CUSTOM_ID("OnHarfAlerting",      eventidOnHarfAlerting,      OnHarfAlerting,      VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8)
@@ -249,6 +240,7 @@ void CCCAgentBarCtrl::DoPropExchange(CPropExchange* pPX)
 	if(pPX->GetVersion() == static_cast<DWORD>(MAKELONG(_wVerMinor, _wVerMajor)))
 	{
 		PX_String(pPX, "AgentID", p_m_Bar->m_strAgentID);
+		PX_String(pPX, "SinglestepTransferNum", p_m_Bar->m_singlestepTransferNum);
 		PX_String(pPX, "PassWord", p_m_Bar->m_strPassWord);
 		PX_String(pPX, "DN", p_m_Bar->m_strDN);
 
@@ -964,6 +956,17 @@ void CCCAgentBarCtrl::SetAnyProperty(LPCTSTR newVal)
 	SetModifiedFlag();
 }
 
+BSTR CCCAgentBarCtrl::GetSinglestepTransferNum(void)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	// TODO: 在此添加调度处理程序代码
+
+	return p_m_Bar->m_singlestepTransferNum.AllocSysString();
+
+}
+
+
 // 方法-------------------------------------------------------------------------------------------------------------
 LONG CCCAgentBarCtrl::Initial(void)
 {
@@ -1239,7 +1242,8 @@ LONG CCCAgentBarCtrl::Retrieve(void)
 	return p_m_Bar->BRetrieve();
 }
 
-LONG CCCAgentBarCtrl::Consult(LPCTSTR consultNum, LPCTSTR showANI, LPCTSTR showDest, LONG consultType)
+LONG CCCAgentBarCtrl::Consult(LPCTSTR consultNum, LPCTSTR showANI, LPCTSTR showDest, 
+                                                LONG consultType)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
@@ -1251,9 +1255,8 @@ LONG CCCAgentBarCtrl::Consult(LPCTSTR consultNum, LPCTSTR showANI, LPCTSTR showD
 		return AGENTBARERROR_BAR_UNSIGNIN;
 	}
 
-	//if(consultType < 0 || consultType > 1)// 注意！
-	//	consultType = 0;
-
+    //if(consultType < 0 || consultType > 1)// 注意！
+    //    consultType = 0;
 	CString ani, dnis;
 	switch(p_m_Bar->m_intANIChangeType)
 	{

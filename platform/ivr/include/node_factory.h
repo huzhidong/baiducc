@@ -83,6 +83,7 @@ private:
     const static char * _s_node_broadcast_num;
     const static char* _s_node_base64_decode;
     const static char* _s_node_base64_encode;
+    const static char* _s_node_set_appdata;
 };
 
 #endif  //__NODE_FACTORY_H_

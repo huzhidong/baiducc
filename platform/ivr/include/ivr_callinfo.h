@@ -20,6 +20,7 @@
 #define _IVR_CALLINFO_H
 
 #include "common.h"
+#include "logger.h"
 
 namespace ivr {
 class ReleaseCauseT {
@@ -45,7 +46,7 @@ class IvrCallInfo
 public:
     IvrCallInfo();
     ~IvrCallInfo();
-    void initial(ivr_session_id_t sessionId, const std::string& caller, const std::string& callee);
+    void initial(ivr_session_id_t sessionId, const std::string& callid, const std::string& caller, const std::string& callee);
     std::string get_callee();
     void set_inbound_begin_time(time_t t);
     time_t get_inbound_begin_time();
@@ -59,14 +60,19 @@ public:
     void set_exit_flow_time(time_t t);
     void set_release_cause(int32_t releaseCause);
     void set_record_filename(const string &recordFilename);
-    void set_skill(const std::string& skill);
+    void set_skill(time_t t, const std::string& skill);
+    void update_skill(time_t t, const std::string& skill);
+    void set_appdata(const std::string& appdata);
     std::string get_skill();
     void set_agent_num(const string &agentnum);
     void reset();
     void write_call_log();
+
+    static Logger _m_logger;
 private:
     ivr_session_id_t _m_sessionid;
     string _m_skill;
+    string _m_route_list;
     string _m_caller;
     string _m_callee;
     time_t _m_inboundbegin_time;
@@ -81,6 +87,10 @@ private:
     string _m_agentnum;
     ReleaseCauseT _m_releaseCause;
     string _m_recordFilename;
+
+    string _m_appdata;
+    string _m_callid;
+    bool _is_update;
 };
 };
 #endif

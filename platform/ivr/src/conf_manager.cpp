@@ -124,6 +124,24 @@ int32_t ConfManager::load_system_conf() {
         return FAILURE;
     }
 
+    IVR_TRACE("---------------[System]-[logger]---------------------------------");
+    g_log_count = conf->get_int("logger", "log_count", 0, _sys_file.c_str(), true);
+    g_log_filecount = conf->get_int("logger", "log_filecount", 0, _sys_file.c_str(), true);
+    g_log_level = conf->get_int("logger", "log_level", 0, _sys_file.c_str(), true);
+    g_log_timeout= conf->get_int("logger", "log_timeout", 0, _sys_file.c_str(), true);
+
+/*
+    char tmp[512] = {0};    //lo
+    conf->get_string("calldata", "log_dir", "", tmp, 512, _sys_file.c_str(), true);
+    g_log_dir = tmp;
+    memset(tmp, 0, 512);
+    conf->get_string("calldata", "log_file", "", tmp, 512, _sys_file.c_str(), true);
+    g_log_file= tmp;
+    memset(tmp, 0, 512);
+    conf->get_string("calldata", "version", "", tmp, 512, _sys_file.c_str(), true);
+    g_version= tmp;
+*/
+
     IVR_TRACE("---------------[System]-[General]---------------------------------");
 
     char ip[16] = {0};           //load ip

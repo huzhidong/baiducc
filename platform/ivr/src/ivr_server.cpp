@@ -34,6 +34,8 @@
 #include "ivrapi.h"
 #include "ivr_data_collection.h"
 
+#include "ivr_callinfo.h"
+
 
 #ifndef SCMPF_MODULE_VERSION
 #define SCMPF_MODULE_VERSION "undefined"
@@ -283,6 +285,13 @@ bool init_log() {
     return true;
 }
 
+void *log_thread(void *) {
+    while (true) {
+        bgcc::TimeUtil::safe_sleep_s(g_log_timeout);
+        ivr::IvrCallInfo::_m_logger.SetTimeout();
+    }
+    return NULL;
+}
 
 extern std::auto_ptr<ConfManager> g_conf_manager;
 
@@ -353,6 +362,22 @@ int32_t main(int32_t argc, char* argv[]) {
         return FAILURE;
     }
 
+    //modified by zzy
+    pthread_t tid = 0;
+    if (pthread_create(&tid, NULL, log_thread, NULL) != 0) {
+        IVR_FATAL("create logthread thread failure");
+        return FAILURE;
+    }
+
+    std::string filename = "calllog-" + g_server_ip;
+    ivr::IvrCallInfo::_m_logger.Initialize(
+            g_log_count, 
+            g_log_filecount, 
+            "log/calllog", 
+            filename.c_str(), 
+            "3", 
+            true);
+    
     pthread_t thread_h = 0;
 
     //Æô¶¯event socket¼àÌýÏß³Ì

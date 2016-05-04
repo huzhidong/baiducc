@@ -1,18 +1,8 @@
-/*
- * Copyright 2002-2014 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      CC/LICENSE
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// *****************************************************************************
+//  Name:		CCCAgentBarCtrl，控件基本类
+//  Author:		Yanhl
+//  Version:	1.0
+// *****************************************************************************
 
 #pragma once
 
@@ -84,6 +74,7 @@ public:
 		eventidOnBusy = 3L,
 		eventidOnReady = 2L,
 		eventidOnUnLogin = 1L,
+		dispidSinglestepTransferNum = 83L,
 		dispidTransIVR = 81L,
 		dispidTransIVREx = 82L,
 		dispidJumptheQueue = 80L,
@@ -234,7 +225,6 @@ protected:
 	void SetEnableSeniorCall(LONG newVal);
 	BSTR GetAnyProperty(void);
 	void SetAnyProperty(LPCTSTR newVal);
-
 // 方法
 protected:
 	LONG Initial(void);
@@ -293,6 +283,7 @@ protected:
 	LONG JumptheQueue(LONGLONG requestId);
 	LONG TransIVR(LPCTSTR transferNum);
 	LONG TransIVREx(LPCTSTR callerNum, LPCTSTR transferNum);
+	BSTR GetSinglestepTransferNum(void);
 
 // 事件
 public:
@@ -311,9 +302,9 @@ public:
 		FireEvent(eventidOnBusy, EVENT_PARAM(VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8), eventID, callID, contactID, partyNum, otherParty, otherPartyAttribute, originatingParty, originalANI, originalDNIS, reason, timestamp);
 	}
 
-	void OnRest(LONG eventID, LPCTSTR callID, LONGLONG contactID, LONG partyNum, LPCTSTR otherParty, LONG otherPartyAttribute, LPCTSTR originatingParty, LPCTSTR originalANI, LPCTSTR originalDNIS, LONG reason, LONGLONG timestamp)
+	void OnRest(LONG eventID, LPCTSTR callID, LONGLONG contactID, LONG partyNum, LPCTSTR otherParty, LONG otherPartyAttribute, LPCTSTR originatingParty, LPCTSTR originalANI, LPCTSTR originalDNIS, LONG reason, LONGLONG timestamp, LPCTSTR restReason)
 	{
-		FireEvent(eventidOnRest, EVENT_PARAM(VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8), eventID, callID, contactID, partyNum, otherParty, otherPartyAttribute, originatingParty, originalANI, originalDNIS, reason, timestamp);
+		FireEvent(eventidOnRest, EVENT_PARAM(VTS_I4 VTS_BSTR VTS_I8 VTS_I4 VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_I8 VTS_BSTR), eventID, callID, contactID, partyNum, otherParty, otherPartyAttribute, originatingParty, originalANI, originalDNIS, reason, timestamp, restReason);
 	}
 
 	void OnLock(LONG eventID, LPCTSTR callID, LONGLONG contactID, LONG partyNum, LPCTSTR otherParty, LONG otherPartyAttribute, LPCTSTR originatingParty, LPCTSTR originalANI, LPCTSTR originalDNIS, LONG reason, LONGLONG timestamp)

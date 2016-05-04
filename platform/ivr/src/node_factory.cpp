@@ -54,6 +54,7 @@
 #include "node_broadcast_num.h"
 #include "node_base64encode.h"
 #include "node_base64decode.h"
+#include "node_setappdata.h"
 
 const char* node_factory::NODE_ANSWER = "answer";
 const char* node_factory::NODE_HANGUP = "hangup";
@@ -88,6 +89,7 @@ const char* node_factory::NODE_GET_ASSOCIATEDATA = "getassociatedata";
 const char* node_factory::NODE_REQUEST_RESULT = "requestresponsecompare";
 const char* node_factory::_s_node_base64_encode = "base64encode";
 const char* node_factory::_s_node_base64_decode = "base64decode";
+const char* node_factory::_s_node_set_appdata = "setappdata";
 
 const char* node_factory::NODE_WHATWEEKDAY = "whatweekday";
 const char* node_factory::NODE_MAKECALL = "makecall";
@@ -169,6 +171,8 @@ NodeBase* node_factory::create_node(const uint32_t id,
         node = new(std::nothrow) NodeBase64Encode(id, name, type, desc, keymap);
     }else if (strcasecmp(type.c_str(), _s_node_base64_decode) == 0) {
         node = new(std::nothrow) NodeBase64Decode(id, name, type, desc, keymap);
+    }else if (strcasecmp(type.c_str(), _s_node_set_appdata) == 0) {
+        node = new(std::nothrow) NodeSetAppData(id, name, type, desc, keymap);
     }
 
     if (node && (!node->load_other())) {
