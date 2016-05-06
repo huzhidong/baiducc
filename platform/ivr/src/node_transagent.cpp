@@ -43,6 +43,7 @@ NodeBase* NodeTransAgent::run(base_script_t* param) {
     ims_transtype_t ttype;
 
     if (_get_type(_transtype, ttype)) {
+        IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::TRANSAGENT, "");
         if (IVR_SUCCESS == ims_mgr_t::get_instance()->trans_agent(param->imsno, param->imssid,
                 param->requestId, ttype)) {
             IVR_TRACE("trans agent success!");
@@ -50,11 +51,11 @@ NodeBase* NodeTransAgent::run(base_script_t* param) {
             // mark stop to receive fs event and send fs cmd
             IvrInstanceManager::get_instance()->mark_transagent(param->session_id,
                     strcasecmp(noevent.c_str(), "false") != 0);
-            IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::TRANSAGENT, "");
         } else {
             IVR_WARN("trans agent failed!");
         }
     } else {
+        IvrCallDataCollection::instance().set_state(param->session_id, IvrInboundCall::INFLOW, "");
         IVR_WARN("failed to convert %s to trans type!", _transtype.c_str());
     }
 
