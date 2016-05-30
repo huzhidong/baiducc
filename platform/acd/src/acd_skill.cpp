@@ -107,7 +107,8 @@ void acd_skill::Method() {
         p_agent->lock(pRequest->GetEvent(), m_strSkill, pRequest->GetWaitbeginTime());
 
         if (acd_tool::p_m_acd_ims->RouteRequestRespond(pRequest->GetEvent().sessionid,
-                pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonSuccess, p_agent->GetAgentDn())) {
+                pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonSuccess, p_agent->GetAgentDn(), 
+                p_agent->GetAgentId())) {
             acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
                                         "flag:%d skill:%s requestId:%"SHOW_LONG"d request agentId:%s agentDn:%d success", m_skill_flag,
                                         m_strSkill.c_str(), requestId, p_agent->GetAgentId().c_str(), p_agent->GetAgentDn().c_str());
@@ -140,7 +141,7 @@ bool acd_skill::isTimeoutRequest(const request_ptr& pRequest) {
     if (bgcc::TimeUtil::get_timestamp_us() - pRequest->GetEvent().timestamp >
             pRequest->GetEvent().timeout * 1000000) {
         acd_tool::p_m_acd_ims->RouteRequestRespond(pRequest->GetEvent().sessionid,
-                pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonBusy, "");
+                pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonBusy, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
                                     "requestId:%"SHOW_LONG"d is timeout", pRequest->GetEvent().requstid);
         return true;
@@ -151,7 +152,7 @@ bool acd_skill::isTimeoutRequest(const request_ptr& pRequest) {
 
 bool acd_skill::ProcessInvalidRequest(const request_ptr& pRequest) {
     acd_tool::p_m_acd_ims->RouteRequestRespond(pRequest->GetEvent().sessionid,
-            pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonWrongSkill, "");
+            pRequest->GetEvent().requstid, ims::RouteEventReasonT::RouteReasonWrongSkill, "", "");
     acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
                                 "requestId:%"SHOW_LONG"d invalid", pRequest->GetEvent().requstid);
     return true;

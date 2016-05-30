@@ -642,13 +642,14 @@ bool acd_ims::GetAssociateData(ims::SessionIdT sessionid, const string& agentId,
 }
 
 bool acd_ims::RouteRequestRespond(ims::SessionIdT sessionid, ims::RouteRequestIDT requestId,
-                                  const ims::RouteEventReasonT& result, const string& targetUri) {
+                                  const ims::RouteEventReasonT& result, const string& targetUri, 
+                                  const string& targetAgentId) {
     if (p_m_imsapi_prx) {
         acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
                                     "sessionid:%"SHOW_LONG"d requestId:%"SHOW_LONG"d result:%s targetUri:%s", sessionid, requestId,
                                     result.get_desc().c_str(), targetUri.c_str());
         ims::CcResultT ret = p_m_imsapi_prx->RouteRequestRespond(m_reqid, sessionid, requestId, result,
-                             targetUri);
+                             targetUri, targetAgentId);
 
         if (p_m_imsapi_prx->get_errno() != 0) {
             acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,

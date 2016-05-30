@@ -224,6 +224,7 @@ uint32_t InboundChanThread::execute(void* taskparam) {
 
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::CALL_BEGIN_TIME]].pvalue = curr;
     *(string*)script.name_var_map[SYS_VAR[sys_var_t::CALL_ANSWER_TIME]].pvalue = curr;
+    *(string*)script.name_var_map[SYS_VAR[sys_var_t::AGENTID]].pvalue = "";
 
     //运行流程
     node = script.flow->id_node_map[script.flow->begin_id];

@@ -270,6 +270,9 @@ NodeBase* NodeWaitEvent::run(base_script_t* param) {
                 int32_t evt_name = e->evt_name;
 
                 if (ivr_ims_event_t::IVR_EVT_IMS_ROUTE_RESPONSE == evt_name) {
+                    //Update transfer agentid
+                    *(string*)param->name_var_map[SYS_VAR[sys_var_t::AGENTID]].pvalue 
+                        = e->data.targetAgentId;
                     // ims response event
                     string_build strb;
                     string res = e->data.reason.get_desc();
@@ -280,12 +283,18 @@ NodeBase* NodeWaitEvent::run(base_script_t* param) {
                     "\",\"Agent\":\"" + e->data.targetDevice + "\"}";
                     *(string*)it->second.pvalue = strb.str();
                 } else if (ivr_ims_event_t::IVR_EVT_IMS_NOT_RESPONSE == evt_name) {
+                    //Update transfer agentid
+                    *(string*)param->name_var_map[SYS_VAR[sys_var_t::AGENTID]].pvalue 
+                        = "";
                     string_build strb;
                     strb + "{\"requestID\":\"" + e->data.requstid +
                     "\",\"RequestResult\":\"" + "RouteReasonNotResponse" +
                     "\",\"Agent\":\"" + e->data.targetDevice + "\"}";
                     *(string*)it->second.pvalue = strb.str();
                 } else {
+                    //Update transfer agentid
+                    *(string*)param->name_var_map[SYS_VAR[sys_var_t::AGENTID]].pvalue 
+                        = "";
                     string_build strb;
                     strb + "{\"requestID\":\"" + e->data.requstid +
                     "\",\"RequestResult\":\"" + "Unknown" +

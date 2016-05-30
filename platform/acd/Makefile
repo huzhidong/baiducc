@@ -10,7 +10,7 @@ INC_PATH += -I../../interface/output/ims/include/
 INC_PATH += -I$(DEP_ROOT)/mysql/output/include/
 INC_PATH += -I$(DEP_ROOT)/json-c/output/include
 
-LIB_PATH  = -L../../interface/output/bgcc/lib/
+LIB_PATH  = -L../../interface/output/bgcc//lib/
 LIB_PATH += -L../../interface/output/acd/lib/linux/
 LIB_PATH += -L../../interface/output/ims/lib/linux/
 LIB_PATH += -L$(DEP_ROOT)/mysql/output/lib/

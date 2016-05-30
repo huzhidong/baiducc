@@ -1070,6 +1070,7 @@ CcResultT imsapi_impl_t::RouteRequestRespond(ReqIdT reqid,
         RouteRequestIDT requestId,
         const RouteEventReasonT& result,
         const std::string& targetUri,
+        const std::string& targetAgentId,
         const std::map<std::string, std::string>& ctx) {
     NOTICE_LOG("RouteRequestRespond start, reqid=%ld,sid=%ld,requestId=%ld,result=%s,target=%s",
                reqid, sessionid, requestId, result.get_desc().c_str(), targetUri.c_str());
@@ -1100,6 +1101,7 @@ CcResultT imsapi_impl_t::RouteRequestRespond(ReqIdT reqid,
     ims_event.reason = result;
     ims_event.eventType = ims::RouteEventTypeT::RT_RouteRespond;
     ims_event.targetDevice = targetUri;
+	ims_event.targetAgentId = targetAgentId;
 
     /*        //先删除记录再推送事件，因为事件推送是不可逆的。
             //但是这样更容易因为线程之间的竞争导致不一致的结果。
@@ -1157,8 +1159,10 @@ CcResultT imsapi_impl_t::RouteRequestRespond(ReqIdT reqid,
         }
     }
 
-    NOTICE_LOG("RouteRequestRespond OK. reqid=%ld,sid=%ld,requestId=%ld,result=%s,target=%s",
-               reqid, sessionid, requestId, result.get_desc().c_str(), targetUri.c_str());
+    NOTICE_LOG("RouteRequestRespond OK. reqid=%ld,sid=%ld,requestId=%ld,result=%s,target=%s,"
+               "agentID = %s",
+               reqid, sessionid, requestId, result.get_desc().c_str(), targetUri.c_str(), 
+			   targetAgentId.c_str());
     return CcResultT::ResSuccess;
 }
 

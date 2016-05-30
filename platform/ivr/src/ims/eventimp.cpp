@@ -44,7 +44,8 @@ ims::CcResultT ImsEventImp::SendRouteEvent(const ims::RouteEventT& event,
         ss << "callid(" << event.callid
            << ") sessionid(" << event.sessionid
            << ") reason" << event.reason.get_desc()
-           << ") agent(" << event.targetDevice << ")";
+           << ") agentDN(" << event.targetDevice
+           << ") agentID(" << event.targetAgentId << ")";
         IVR_TRACE("ims route event: %s", ss.str().c_str());
     }
     ivr_session_id_t ivrsid = 0;

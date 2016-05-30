@@ -308,11 +308,12 @@ namespace ims {
 
         /**
          * 路由请求回复
-         * @param reqid        [in] : 注册时得到的服务单元的标识
-         *        sessionid    [in] : 呼叫的sessionid
-         *        requestId    [in] : 路由请求ID 
-         *        result       [in] : 路由请求结果
-         *        targetUri    [in] : 路由找到的分机号码 
+         * @param reqid         [in] : 注册时得到的服务单元的标识
+         *        sessionid     [in] : 呼叫的sessionid
+         *        requestId     [in] : 路由请求ID 
+         *        result        [in] : 路由请求结果
+         *        targetUri     [in] : 路由找到的分机号码 
+         *        targetAgentId [in] : 路由找到的坐席工号
          *
          * @return 接口调用结果
          */
@@ -320,7 +321,8 @@ namespace ims {
                 SessionIdT sessionid,
                 RouteRequestIDT  requestId,
                 RouteEventReasonT result,
-                string targetUri
+                string targetUri,
+                string targetAgentId
                 );
 
         /**

@@ -71,6 +71,7 @@ bool AutoDialChanThread::init_ivrvars(const std::string& dialdata, inbound_scrip
     *(string*)kvpair[SYS_VAR[sys_var_t::HANGUP_CAUSE]].pvalue = "user_hangup";
     *(string*)kvpair[SYS_VAR[sys_var_t::CALL_BEGIN_TIME]].pvalue = curr;
     *(string*)kvpair[SYS_VAR[sys_var_t::CALL_ANSWER_TIME]].pvalue = curr;
+    *(string*)kvpair[SYS_VAR[sys_var_t::AGENTID]].pvalue = "";
 
     if (kvpair.find("_AUTODIALDATA") == kvpair.end()) {
         variable_t variable;

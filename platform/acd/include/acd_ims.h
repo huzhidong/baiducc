@@ -71,7 +71,8 @@ public:
                           string& val);
     //RouteRequest, CancelRouteRequest
     bool RouteRequestRespond(ims::SessionIdT sessionid, ims::RouteRequestIDT requestId,
-                             const ims::RouteEventReasonT& result, const string& targetUri);
+                             const ims::RouteEventReasonT& result, const string& targetUri, 
+                             const string& targetAgentId);
     //CreateSession, TransferAgent
     bool Record(ims::SessionIdT sessionid, const string& agentId, const string& agentDn,
                 const string& filename, int32_t maxTime, const string& interruptKeys);

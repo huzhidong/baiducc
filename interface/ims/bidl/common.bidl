@@ -284,6 +284,7 @@ namespace ims {
         int32                timeout;            /*超时时间*/ 
         string               buffer;             /*保留参数*/
         int64                timestamp;          /*事件时间戳*/
+        string               targetAgentId;      /*目标坐席工号*/
     }
 
     /*其他事件类型*/

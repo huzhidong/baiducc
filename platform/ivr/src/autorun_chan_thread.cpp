@@ -111,6 +111,7 @@ uint32_t AutoRunChanThread::execute(void* taskparam) {
         *(string*)_script->name_var_map[SYS_VAR[sys_var_t::HANGUP_CAUSE]].pvalue = "user_hangup";
         *(string*)_script->name_var_map[SYS_VAR[sys_var_t::CALL_BEGIN_TIME]].pvalue = curr;
         *(string*)_script->name_var_map[SYS_VAR[sys_var_t::CALL_ANSWER_TIME]].pvalue = curr;
+        *(string*)_script->name_var_map[SYS_VAR[sys_var_t::AGENTID]].pvalue = "";
 
         NodeBase* node = _script->flow->id_node_map[_script->flow->begin_id];
 

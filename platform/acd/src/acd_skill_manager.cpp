@@ -79,7 +79,7 @@ void acd_skill_manager::RouteRequest(const ims::RouteEventT& event) {
         p_skill->RouteRequest(event);
     } else {
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonWrongSkill, "");
+                ims::RouteEventReasonT::RouteReasonWrongSkill, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_WARNING, __FILE__, __LINE__, __FUNCTION__,
                                     "requestId:%"SHOW_LONG"d request skill:%s not existed", event.requstid, event.requestArgs.c_str());
     }
@@ -190,7 +190,7 @@ void acd_skill_manager::ProcessIMSEvent(const ims::RouteEventT& event) {
     switch (event.eventType.get_value()) {
     case ims::RouteEventTypeT::RT_RouteUnknown:
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonError, "");
+                ims::RouteEventReasonT::RouteReasonError, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_CRITICAL, __FILE__, __LINE__, __FUNCTION__,
                                     "event type error");
         break;
@@ -201,7 +201,7 @@ void acd_skill_manager::ProcessIMSEvent(const ims::RouteEventT& event) {
 
     case ims::RouteEventTypeT::RT_RouteRespond:
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonError, "");
+                ims::RouteEventReasonT::RouteReasonError, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_CRITICAL, __FILE__, __LINE__, __FUNCTION__,
                                     "event type error");
         break;
@@ -212,7 +212,7 @@ void acd_skill_manager::ProcessIMSEvent(const ims::RouteEventT& event) {
 
     default:
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonError, "");
+                ims::RouteEventReasonT::RouteReasonError, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_CRITICAL, __FILE__, __LINE__, __FUNCTION__,
                                     "event type error");
         break;

@@ -442,7 +442,8 @@ typedef struct _sys_var_t {
         CALL_BEGIN_TIME = 5, ///< 呼叫到达平台的时间
         CALL_ANSWER_TIME = 6, ///< 呼叫被接起的时间
         TRUNCK = 7,
-        END = 8
+        AGENTID= 8, //转坐席的工号
+        END = 9
     };
 } sys_var_t;
 

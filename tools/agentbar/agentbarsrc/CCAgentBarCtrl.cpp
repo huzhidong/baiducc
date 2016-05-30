@@ -1319,7 +1319,7 @@ LONG CCCAgentBarCtrl::SingleStepTransfer(LPCTSTR transferNum, LPCTSTR showANI, L
 		return AGENTBARERROR_BAR_UNSIGNIN;
 	}
 
-	if(transferType < 0 || transferType > 2)// 注意！
+	if (transferType < 0 || transferType > 3)// 注意！
 		transferType = 0;
 
 	// 0：内线
@@ -1346,6 +1346,10 @@ LONG CCCAgentBarCtrl::SingleStepTransfer(LPCTSTR transferNum, LPCTSTR showANI, L
 	default:
 		break;
 	}
+    if (transferType == 3) {
+        ani = showANI;
+        dnis = showDest;
+    }
 
 	return p_m_Bar->BSingleStepTransfer(transferNum, ani, dnis, transferStyle, transferType);
 }

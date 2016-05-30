@@ -213,6 +213,7 @@ public:
         RouteRequestIDT requestId,
         const RouteEventReasonT& result,
         const std::string& targetUri,
+        const std::string& targetAgentId,
         const std::map<std::string, std::string>& ctx);
 
     virtual CcResultT CreateSession(

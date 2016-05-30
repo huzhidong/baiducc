@@ -86,7 +86,8 @@ const char* SYS_VAR[] = {
     "_HANGUP_CAUSE",
     "_CALL_BEGIN_TIME",
     "_CALL_ANSWER_TIME",
-    "_TRUNCK"//add to store associate data when incall is transfer from other ivr
+    "_TRUNCK",//add to store associate data when incall is transfer from other ivr
+    "_AGENTID"
 };
 std::string base_script_t::bill_info() {
     ostringstream ostm;

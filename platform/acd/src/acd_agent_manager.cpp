@@ -168,7 +168,8 @@ void acd_agent_manager::RouteRequestSuccess(const ims::RouteEventT& event,
     p_agent->lock(event, "");
 
     if (acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-            ims::RouteEventReasonT::RouteReasonSuccess, p_agent->GetAgentDn())) {
+            ims::RouteEventReasonT::RouteReasonSuccess, p_agent->GetAgentDn(), 
+            p_agent->GetAgentId())) {
         acd_tool::m_logger.WriteLog(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __FUNCTION__,
                                     "requestId:%"SHOW_LONG"d request agentId:%s agentDn:%s success", event.requstid,
                                     event.requestArgs.c_str(), p_agent->GetAgentDn().c_str());
@@ -182,7 +183,7 @@ void acd_agent_manager::RouteRequestSuccess(const ims::RouteEventT& event,
 
 void acd_agent_manager::RouteRequestFail(const ims::RouteEventT& event,
         const ims::RouteEventReasonT& result) {
-    acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid, result, "");
+    acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid, result, "", "");
     time_t t = time(NULL);
     callinfo info;
     info.Initial(event.sessionid, event.callid, "", "", "", event.callerDn, event.calleeDn, t, t);
@@ -238,7 +239,7 @@ void acd_agent_manager::ProcessIMSEvent(const ims::RouteEventT& event) {
     switch (event.eventType.get_value()) {
     case ims::RouteEventTypeT::RT_RouteUnknown:
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonError, "");
+                ims::RouteEventReasonT::RouteReasonError, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_CRITICAL, __FILE__, __LINE__, __FUNCTION__,
                                     "event type error");
         break;
@@ -249,7 +250,7 @@ void acd_agent_manager::ProcessIMSEvent(const ims::RouteEventT& event) {
 
     case ims::RouteEventTypeT::RT_RouteRespond:
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonError, "");
+                ims::RouteEventReasonT::RouteReasonError, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_CRITICAL, __FILE__, __LINE__, __FUNCTION__,
                                     "event type error");
         break;
@@ -260,7 +261,7 @@ void acd_agent_manager::ProcessIMSEvent(const ims::RouteEventT& event) {
 
     default:
         acd_tool::p_m_acd_ims->RouteRequestRespond(event.sessionid, event.requstid,
-                ims::RouteEventReasonT::RouteReasonError, "");
+                ims::RouteEventReasonT::RouteReasonError, "", "");
         acd_tool::m_logger.WriteLog(LOG_LEVEL_CRITICAL, __FILE__, __LINE__, __FUNCTION__,
                                     "event type error");
         break;
