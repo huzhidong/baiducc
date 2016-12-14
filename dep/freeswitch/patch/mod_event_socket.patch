@@ -1,6 +1,6 @@
 --- freeswitch-1.0.6/src/mod/event_handlers/mod_event_socket/mod_event_socket.c	2010-04-07 02:05:28.000000000 +0800
-+++ freeswitch-1.0.6/src/mod/event_handlers/mod_event_socket/mod_event_socket.c	2011-10-19 11:19:32.000000000 +0800
-@@ -286,12 +286,14 @@
++++ freeswitch-1.0.6/src/mod/event_handlers/mod_event_socket/mod_event_socket.c	2016-12-14 12:07:51.000000000 +0800
+@@ -286,12 +286,14 @@ static void event_handler(switch_event_t
  			}
  		}
  
@@ -18,7 +18,7 @@
  			for (hp = l->filters->headers; hp; hp = hp->next) {
  				if ((hval = switch_event_get_header(event, hp->name))) {
  					const char *comp_to = hp->value;
-@@ -335,6 +337,7 @@
+@@ -335,6 +337,7 @@ static void event_handler(switch_event_t
  					}
  				}
  			}
@@ -26,7 +26,16 @@
  			switch_mutex_unlock(l->filter_mutex);
  		}
  
-@@ -1278,7 +1281,8 @@
+@@ -1026,7 +1029,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_event_so
+ static switch_status_t read_packet(listener_t *listener, switch_event_t **event, uint32_t timeout)
+ {
+ 	switch_size_t mlen, bytes = 0;
+-	char mbuf[2048] = "";
++	char mbuf[4096] = "";
+ 	char buf[1024] = "";
+ 	switch_size_t len;
+ 	switch_status_t status = SWITCH_STATUS_SUCCESS;
+@@ -1278,7 +1281,8 @@ static switch_status_t read_packet(liste
  		}
  
  		if (do_sleep) {
